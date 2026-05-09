@@ -172,12 +172,20 @@ class VoxaServer:
                     if server.core.is_listening:
                         self.send_json(200, {'status': 'already_listening'})
                     else:
-                        server.core.start()
+                        # 在独立线程中启动，避免阻塞 HTTP 请求
+                        thread = threading.Thread(target=server.core.start, daemon=True)
+                        thread.start()
                         self.send_json(200, {'status': 'started'})
 
                 elif path == '/api/stop':
-                    result = server.core.stop()
-                    self.send_json(200, {'status': 'stopped', 'text': result or ''})
+                    # stop() 可能在润色，需要时间，在线程中执行
+                    result = [None]
+                    def do_stop():
+                        result[0] = server.core.stop()
+                    t = threading.Thread(target=do_stop, daemon=True)
+                    t.start()
+                    t.join(timeout=60)
+                    self.send_json(200, {'status': 'stopped', 'text': result[0] or ''})
 
                 elif path == '/api/cancel':
                     server.core.cancel()
