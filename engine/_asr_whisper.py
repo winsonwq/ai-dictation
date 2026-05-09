@@ -57,8 +57,26 @@ class WhisperCppBackend:
             return
 
         worker_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'whisper-worker')
+        worker_src = worker_bin + '.c'
         if not os.path.exists(worker_bin):
-            raise RuntimeError(f'未找到 whisper-worker: {worker_bin}，请先编译')
+            if not os.path.exists(worker_src):
+                raise RuntimeError(f'未找到 whisper-worker.c')
+            # 自动编译
+            _logger.info('编译 whisper-worker ...')
+            import subprocess as _sp
+            ret = _sp.run(
+                ['gcc', '-O2', '-o', worker_bin, worker_src, '-lwhisper'],
+                capture_output=True, text=True, timeout=30,
+            )
+            if ret.returncode != 0:
+                # 尝试 pkg-config
+                ret = _sp.run(
+                    ['gcc', '-O2', '-o', worker_bin, worker_src, '-lwhisper',
+                     '$(pkg-config --cflags whisper 2>/dev/null)'],
+                    shell=True, capture_output=True, text=True, timeout=30,
+                )
+            if ret.returncode != 0 or not os.path.exists(worker_bin):
+                raise RuntimeError(f'whisper-worker 编译失败: {ret.stderr}\n请先安装: brew install whisper-cpp')
 
         model_path = self._get_model_path()
         if not model_path.exists():

@@ -2,7 +2,10 @@
  * whisper-worker.c
  * 微型 whisper.cpp 常驻进程 — stdin/stdout 协议
  *
- * 编译: gcc -O2 -o whisper-worker whisper-worker.c -lwhisper -I/opt/homebrew/include
+ * 编译:
+ *   macOS:  gcc -O2 -o whisper-worker whisper-worker.c -lwhisper $(pkg-config --cflags whisper)
+ *   Linux:  gcc -O2 -o whisper-worker whisper-worker.c -lwhisper $(pkg-config --cflags whisper)
+ *   or:     gcc -O2 -o whisper-worker whisper-worker.c -lwhisper -I/usr/local/include
  *
  * 协议:
  *   TRANSCRIBE <lang>\n<4字节长度><WAV数据>
