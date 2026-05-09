@@ -66,7 +66,11 @@ class SenseVoiceBackend:
         # 加载 ASR 模型
         self._model = SenseVoiceInferenceSession(
             str(model_dir / 'embedding.npy'),
-            str(model_dir / 'sense-voice-encoder.onnx'),
+            # 默认使用 int8 量化版本（和 Handy 一致），体积小 4x
+            encoder_path = model_dir / 'sense-voice-encoder-int8.onnx'
+            if not encoder_path.exists():
+                encoder_path = model_dir / 'sense-voice-encoder.onnx'
+            str(encoder_path),
             str(model_dir / 'chn_jpn_yue_eng_ko_spectok.bpe.model'),
             device_id=-1,  # CPU
             intra_op_num_threads=6,
