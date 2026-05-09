@@ -40,6 +40,7 @@ from engine.audio import MicrophoneCapture, FileAudioSource, check_environment
 from engine.vad import VADEngine, VAD_CHUNK_SIZE
 from engine.asr import ASREngine
 from engine.polish import PolishEngine, _polish_cache
+from engine.stream_transcriber import StreamTranscriber
 
 
 # ===================== State Machine =====================
@@ -47,6 +48,7 @@ from engine.polish import PolishEngine, _polish_cache
 class State(Enum):
     IDLE = 'idle'
     LISTENING = 'listening'
+    STREAMING = 'streaming'  # 流式转写中（边说边转写）
     FLUSHING = 'flushing'
     POLISHING = 'polishing'
     ERROR = 'error'
@@ -55,6 +57,7 @@ class State(Enum):
 STATE_PROMPTS = {
     State.IDLE: '🎤 按空格开始听写',
     State.LISTENING: '🎙️ 听写中... (按空格停止)',
+    State.STREAMING: '📝 转写中... (按空格停止)',
     State.FLUSHING: '⏳ 转写中...',
     State.POLISHING: '✨ 润色中...',
     State.ERROR: '❌ 错误',
@@ -83,6 +86,7 @@ class RichUI:
         self._model = model
         self._state = State.IDLE
         self._partial = ''
+        self._streaming = ''  # 流式转写增量文本
         self._final = ''
         self._polished = ''
         self._lines = []
@@ -99,6 +103,7 @@ class RichUI:
         state_color = {
             State.IDLE: 'white',
             State.LISTENING: 'green',
+            State.STREAMING: 'cyan',
             State.FLUSHING: 'yellow',
             State.POLISHING: 'blue',
             State.ERROR: 'red',
@@ -115,6 +120,8 @@ class RichUI:
         elif self._final:
             timing = f" [dim]({self._elapsed:.1f}s)[/dim]" if getattr(self, '_elapsed', None) else ""
             self.console.print(f"📝 转写: {self._final}{timing}")
+        elif self._streaming:
+            self.console.print(f"[cyan]📝 转写: {self._streaming}[/cyan]", style="dim")
         elif self._partial:
             self.console.print(f"📝 {self._partial}", style="dim")
 
@@ -128,13 +135,22 @@ class RichUI:
         self.console.print("─" * 50, style="dim")
         self.console.print("[dim]空格: 开始/停止听写   |   q: 退出[/dim]")
 
-    def update(self, state: State, partial='', final='', polished='', elapsed=None):
+    def update(self, state: State, partial='', final='', polished='', elapsed=None, streaming=''):
+        # 开始新录制时清空所有中间状态（移到最前面，避免被后续赋值覆盖）
+        if state in (State.LISTENING, State.STREAMING):
+            self._final = ''
+            self._partial = ''
+            self._streaming = ''
+        
         self._state = state
         if partial:
             self._partial = partial
+        if streaming:
+            self._streaming = streaming
         if final:
             self._final = final
             self._partial = ''
+            self._streaming = ''
             self._elapsed = elapsed
         if polished:
             self._polished = polished
@@ -145,6 +161,7 @@ class RichUI:
             self._lines.append(f'[{ts}] {polished or final}')
             self._final = ''
             self._partial = ''
+            self._streaming = ''
             self._polished = ''
             self._elapsed = None
 
@@ -166,6 +183,7 @@ class PlainUI:
         self._state = State.IDLE
         self._lines = []
         self._partial = ''
+        self._streaming = ''
         self._final = ''
         self._polished = ''
 
@@ -186,6 +204,8 @@ class PlainUI:
         elif self._final:
             timing = f' ({self._elapsed:.1f}s)' if getattr(self, '_elapsed', None) else ''
             print(f'转写: {self._final}{timing}')
+        elif self._streaming:
+            print(f'转写: {self._streaming}')
         elif self._partial:
             print(f'转写: {self._partial}')
 
@@ -197,13 +217,22 @@ class PlainUI:
         print('─' * 40)
         print('空格: 开始/停止   q: 退出')
 
-    def update(self, state: State, partial='', final='', polished='', elapsed=None):
+    def update(self, state: State, partial='', final='', polished='', elapsed=None, streaming=''):
+        # 开始新录制时清空所有中间状态（移到最前面，避免被后续赋值覆盖）
+        if state in (State.LISTENING, State.STREAMING):
+            self._final = ''
+            self._partial = ''
+            self._streaming = ''
+        
         self._state = state
         if partial:
             self._partial = partial
+        if streaming:
+            self._streaming = streaming
         if final:
             self._final = final
             self._partial = ''
+            self._streaming = ''
             self._elapsed = elapsed
         if polished:
             self._polished = polished
@@ -213,6 +242,7 @@ class PlainUI:
             self._lines.append(f'[{ts}] {polished or final}')
             self._final = ''
             self._partial = ''
+            self._streaming = ''
             self._polished = ''
             self._elapsed = None
 
@@ -245,6 +275,8 @@ class DictationEngine:
         disable_polish: bool = False,
         use_file: Optional[str] = None,
         device: Optional[int] = None,
+        streaming: bool = False,
+        flush_interval: float = 2.0,
     ):
         self.engine = engine
         self.model_size = model_size
@@ -252,6 +284,8 @@ class DictationEngine:
         self.disable_polish = disable_polish
         self.use_file = use_file
         self.device = device
+        self.streaming = streaming
+        self.flush_interval = flush_interval
 
         self._state = State.IDLE
         self._audio: Optional[MicrophoneCapture] = None
@@ -259,6 +293,7 @@ class DictationEngine:
         self._vad: Optional[VADEngine] = None
         self._asr: Optional[ASREngine] = None
         self._polish: Optional[PolishEngine] = None
+        self._stream_transcriber: Optional[StreamTranscriber] = None
 
         self._audio_buffer = []
         self._current_partial = ''
@@ -266,11 +301,13 @@ class DictationEngine:
         self._speech_active = False
         self._silence_count = 0
         self._running = False
+        self._t_stop: float = 0.0  # 初始化，避免 stop() 时未设置错误
 
         # 回调
         self.on_transcript = None  # (text: str, is_partial: bool) -> None
         self.on_polish = None     # (text: str) -> None
         self.on_state_change = None
+        self.on_streaming = None  # (text: str) -> None, 流式增量文本回调
 
     def _set_state(self, state: State):
         self._state = state
@@ -302,7 +339,7 @@ class DictationEngine:
             return
 
         self._load_engines()
-        self._set_state(State.LISTENING)
+        self._set_state(State.LISTENING if not self.streaming else State.STREAMING)
         self._current_partial = ''
         self._current_final = ''
         self._speech_active = False
@@ -314,6 +351,17 @@ class DictationEngine:
         self._vad.reset()
         self._asr.reset()
         self._asr.start()  # 启动 ASR
+
+        # 启动流式转写器（如果启用）
+        if self.streaming and self._stream_transcriber is None:
+            self._stream_transcriber = StreamTranscriber(
+                asr_engine=self._asr,
+                flush_interval=self.flush_interval,
+                on_transcript=self._on_streaming_transcript,
+            )
+
+        if self.streaming:
+            self._stream_transcriber.start()
 
         # 启动音频采集
         if self.use_file:
@@ -327,11 +375,17 @@ class DictationEngine:
         self._thread = threading.Thread(target=self._run_loop, daemon=True)
         self._thread.start()
 
+    def _on_streaming_transcript(self, text: str):
+        """流式转写增量文本回调"""
+        _logger.debug(f'流式转写增量: {text[:50] if text else ""}...')
+        if self.on_streaming:
+            self.on_streaming(text)
+
     def stop(self):
         """停止听写"""
         self._t_stop = time.time()
         _logger.debug(f'stop() called, current state={self._state}')
-        if self._state != State.LISTENING:
+        if self._state not in (State.LISTENING, State.STREAMING):
             return
 
         self._running = False
@@ -341,7 +395,15 @@ class DictationEngine:
             self._audio = None
         _logger.debug(f'stop: audio stopped in {(time.time()-self._t_stop)*1000:.0f}ms')
 
-        self._set_state(State.FLUSHING)
+        # 停止流式转写器并获取最终结果
+        if self.streaming and self._stream_transcriber:
+            final_text = self._stream_transcriber.flush_final()
+            if final_text:
+                self._current_final = final_text
+                if self.on_transcript:
+                    self.on_transcript(final_text, is_partial=False, elapsed=time.time() - self._t_stop)
+
+        self._set_state(State.IDLE)
 
     def _run_loop(self):
         """主处理循环"""
@@ -378,14 +440,19 @@ class DictationEngine:
                         if self._asr:
                             self._asr.reset()
 
-                # 3. 累积音频到 ASR（仅在语音活动时；push 只累积不做推理）
-                if self._asr is not None and self._speech_active:
+                # 3. 流式模式：喂音频到 StreamTranscriber
+                if self.streaming and self._stream_transcriber:
+                    self._stream_transcriber.feed(chunk)
+
+                # 4. 非流式模式：累积音频到 ASR（仅在语音活动时；push 只累积不做推理）
+                elif self._asr is not None and self._speech_active:
                     self._asr.push(chunk)
 
-            # Flush 最终结果
+            # Flush 最终结果（非流式模式走这里，流式模式在 stop() 中已处理）
             if chunk_count > 0:
                 _logger.debug(f'_run_loop: 循环结束, 共处理 {chunk_count} 个 chunk')
-            self._flush()
+            if not self.streaming:
+                self._flush()
 
         except Exception as e:
             _logger.error(f'引擎错误: {e}')
@@ -425,6 +492,9 @@ class DictationEngine:
     def shutdown(self):
         """关闭引擎"""
         self._running = False
+        if self._stream_transcriber:
+            self._stream_transcriber.stop()
+            self._stream_transcriber = None
         if self._audio:
             self._audio.stop()
             self._audio = None
@@ -527,6 +597,13 @@ def parse_args():
                         help='麦克风设备编号（用 --check 查看可用设备）')
     parser.add_argument('--check', action='store_true',
                         help='仅检查环境')
+    # 流式转写参数
+    parser.add_argument('--stream', action='store_true',
+                        help='启用流式转写（边说边转写）')
+    parser.add_argument('--no-stream', dest='stream', action='store_false',
+                        help='禁用流式转写（默认）')
+    parser.add_argument('--flush-interval', type=float, default=2.0,
+                        help='流式转写刷新间隔（秒，默认 2.0）')
     return parser.parse_args()
 
 
@@ -592,6 +669,8 @@ def main():
         disable_polish=not args.polish,
         use_file=args.input_file,
         device=args.device,
+        streaming=args.stream,
+        flush_interval=args.flush_interval,
     )
 
     # 预加载引擎，启动后直接可用
@@ -616,9 +695,13 @@ def main():
     def on_state_change(state):
         event_queue.put(('state', state))
 
+    def on_streaming(text):
+        event_queue.put(('streaming', text))
+
     engine.on_transcript = on_transcript
     engine.on_polish = on_polish
     engine.on_state_change = on_state_change
+    engine.on_streaming = on_streaming
 
     # 键盘处理 - 发送到队列
     _last_space_time = 0.0
@@ -662,25 +745,37 @@ def main():
                 if event[0] == 'key':
                     key = event[1]
                     if key == 'space':
-                        _logger.debug(f'空格键: engine._state={engine._state}')
                         if engine._state == State.IDLE:
                             engine.start()
-                            ui.update(State.LISTENING)
-                        elif engine._state == State.LISTENING:
+                            # 清除之前的转写结果
+                            engine._current_final = ''
+                            engine._current_partial = ''
+                            ui._streaming = ''  # 显式清空，避免空字符串被忽略
+                            ui.update(State.LISTENING if not engine.streaming else State.STREAMING)
+                        elif engine._state in (State.LISTENING, State.STREAMING):
                             engine.stop()
                     elif key == 'quit':
+                        # 退出前停止引擎
+                        if engine._state in (State.LISTENING, State.STREAMING):
+                            engine.stop()
                         running = False
                         break
 
                 elif event[0] == 'transcript':
                     _, text, is_partial, elapsed = event
                     engine._current_partial = text
-                    _logger.debug(f'转写: partial={is_partial}, text={text[:50] if text else ""}... ({elapsed:.1f}s)' if elapsed else '')
                     if is_partial:
                         ui.update(State.LISTENING, partial=text)
                     else:
                         engine._current_final = text
                         ui.update(State.FLUSHING, final=text, elapsed=elapsed)
+
+                elif event[0] == 'streaming':
+                    _, text = event
+                    # 忽略：如果引擎正在处理最终结果
+                    if engine._state in (State.FLUSHING, State.POLISHING):
+                        continue
+                    ui.update(State.STREAMING, streaming=text)
 
                 elif event[0] == 'polish':
                     text = event[1]

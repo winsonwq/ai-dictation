@@ -103,8 +103,8 @@ class WhisperCppBackend:
                 self._audio_buffer = self._audio_buffer[-self._max_audio:]
         return None
 
-    def flush(self) -> Optional[ASRResult]:
-        if not self._running or self._worker is None:
+    def flush(self, force: bool = False) -> Optional[ASRResult]:
+        if not force and (not self._running or self._worker is None):
             return None
         import time as _time; t0 = _time.time()
         with self._lock:

@@ -69,8 +69,8 @@ class ASREngine:
     def push(self, audio_chunk: np.ndarray) -> Optional[str]:
         return self._backend.push(audio_chunk)
 
-    def flush(self) -> Optional[ASRResult]:
-        return self._backend.flush()
+    def flush(self, force: bool = False) -> Optional[ASRResult]:
+        return self._backend.flush(force=force)
 
     def reset(self):
         self._backend.reset()

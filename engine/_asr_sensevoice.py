@@ -89,8 +89,8 @@ class SenseVoiceBackend:
                 self._audio_buffer = self._audio_buffer[-self._max_audio:]
         return None
 
-    def flush(self) -> Optional[ASRResult]:
-        if not self._running or self._model is None:
+    def flush(self, force: bool = False) -> Optional[ASRResult]:
+        if not force and (not self._running or self._model is None):
             return None
         t0 = time.time()
         with self._lock:

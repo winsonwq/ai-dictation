@@ -34,6 +34,15 @@ python main.py --model medium     # 更高精度
 
 按空格开始听写，再按空格停止。
 
+## 流式转写模式
+
+```bash
+python main.py --stream              # 启用流式转写（每 2s 刷新一次）
+python main.py --stream --flush-interval 1.0  # 更快的刷新间隔
+```
+
+流式转写会在你说话过程中实时显示转写结果，而不是等到说完后才显示。适合长段演讲场景。
+
 ## 性能
 
 | 引擎 | 模型 | 短句 (~3s) | 长句 (~15s) | 标点 |
@@ -52,6 +61,8 @@ python main.py --model medium     # 更高精度
 | `--input-file <file>` | 从文件读取音频（WAV 16kHz mono） |
 | `--check` | 仅检查环境 |
 | `--debug` | 调试模式 |
+| `--stream` | 启用流式转写（边说边转写） |
+| `--flush-interval <秒>` | 流式转写刷新间隔（默认 2.0） |
 
 ## 架构
 
@@ -85,6 +96,7 @@ ai-dictation/
 │   ├── _asr_sensevoice.py # SenseVoice 后端
 │   ├── audio.py           # 音频采集
 │   ├── vad.py             # Silero VAD
+│   ├── stream_transcriber.py  # 流式转写组件
 │   └── polish.py          # LLM 润色
 ├── requirements.txt
 └── SPEC.md
