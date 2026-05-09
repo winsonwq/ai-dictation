@@ -79,13 +79,29 @@ class VoxaServer:
             self._sse_clients.remove(client)
 
     def start(self):
-        """在后台线程启动服务器"""
-        self._thread = threading.Thread(target=self._serve, daemon=True)
+        """在后台线程启动服务器，端口被占用时自动选择下一个可用端口"""
+        self._server, actual_port = self._find_available_port()
+        if self._server is None:
+            raise RuntimeError(f'无法找到可用端口 ({self.port} - {self.port + 99})')
+        self.port = actual_port
+        self._server_port = actual_port
+        _logger.info(f'HTTP Server 启动: http://localhost:{actual_port}')
+        self._thread = threading.Thread(target=self._serve_forever, daemon=True)
         self._thread.start()
-        _logger.info(f'HTTP Server 启动: http://localhost:{self.port}')
 
-    def _serve(self):
-        self._server = HTTPServer(('localhost', self.port), self._make_handler())
+    def _find_available_port(self):
+        """找一个可用端口，返回 (server, port)"""
+        for port in range(self.port, self.port + 100):
+            try:
+                server = HTTPServer(('localhost', port), self._make_handler())
+                return server, port
+            except OSError as e:
+                if e.errno == 98:  # Address already in use
+                    continue
+                raise
+        return None, None
+
+    def _serve_forever(self):
         self._server.serve_forever()
 
     def _make_handler(self):
@@ -228,8 +244,13 @@ def main():
     server = VoxaServer(core, port=args.port)
     server.start()
 
-    print(f'Voxa HTTP Server 运行中: http://localhost:{args.port}')
-    print(f'API 文档: http://localhost:{args.port}/api/health')
+    # 等待服务器真正启动，获取实际端口
+    import time
+    time.sleep(0.5)
+    actual_port = server.port
+
+    print(f'Voxa HTTP Server 运行中: http://localhost:{actual_port}')
+    print(f'API 文档: http://localhost:{actual_port}/api/health')
     print('按 Ctrl+C 停止')
 
     try:
