@@ -56,7 +56,7 @@ class WhisperCppBackend:
         if self._worker is not None:
             return
 
-        worker_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'whisper-worker')
+        worker_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'whisper-worker')
         worker_src = worker_bin + '.c'
         if not os.path.exists(worker_bin):
             if not os.path.exists(worker_src):

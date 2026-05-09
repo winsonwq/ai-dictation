@@ -15,7 +15,7 @@ from typing import Optional, Callable
 import numpy as np
 
 from .events import EventEmitter
-from .engine.audio import MicrophoneCapture, FileAudioSource, SAMPLE_RATE
+from .engine.audio import MicrophoneCapture, FileAudioSource, SAMPLE_RATE, AudioError, has_microphone
 from .engine.vad import VADEngine
 from .engine.asr import ASREngine, ASRResult
 from .engine.polish import PolishEngine
@@ -116,28 +116,38 @@ class VoxaCore(EventEmitter):
         if self._state in (State.LISTENING, State.STREAMING):
             return
 
-        self._load_engines()
-        self._set_state(State.LISTENING if not self.streaming else State.STREAMING)
-        self._current_partial = ''
-        self._current_final = ''
-        self._running = True
+        try:
+            self._load_engines()
+            self._set_state(State.LISTENING if not self.streaming else State.STREAMING)
+            self._current_partial = ''
+            self._current_final = ''
+            self._running = True
 
-        # 重置引擎状态
-        self._vad.reset()
-        self._asr.reset()
-        self._asr.start()
+            # 重置引擎状态
+            self._vad.reset()
+            self._asr.reset()
+            self._asr.start()
 
-        # 启动音频采集
-        if self.use_file:
-            self._file_source = FileAudioSource(self.use_file)
-            self._file_source.load()
-        else:
-            self._audio = MicrophoneCapture(device_index=self.device)
-            self._audio.start()
+            # 启动音频采集
+            if self.use_file:
+                self._file_source = FileAudioSource(self.use_file)
+                self._file_source.load()
+            else:
+                # 检查是否有麦克风
+                if not has_microphone():
+                    raise AudioError('未找到麦克风设备')
+                self._audio = MicrophoneCapture(device_index=self.device)
+                self._audio.start()
 
-        # 启动处理线程
-        self._thread = threading.Thread(target=self._run_loop, daemon=True)
-        self._thread.start()
+            # 启动处理线程
+            self._thread = threading.Thread(target=self._run_loop, daemon=True)
+            self._thread.start()
+
+        except Exception as e:
+            _logger.exception(f'启动听写失败: {e}')
+            self._running = False
+            self._set_state(State.ERROR)
+            self.emit('error', str(e))
 
     def stop(self) -> Optional[str]:
         """
