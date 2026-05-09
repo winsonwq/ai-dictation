@@ -7,6 +7,7 @@ SenseVoice backend — 阿里 FunASR SenseVoice，原生中文标点
 import gc
 import logging
 import threading
+import time
 from typing import Optional
 
 import numpy as np
@@ -54,6 +55,17 @@ class SenseVoiceBackend:
                 device='cpu',
                 disable_log=True,
             )
+
+            # 尝试 torch.compile 加速推理（PyTorch 2.0+）
+            try:
+                import torch
+                if hasattr(self._model, 'model') and hasattr(torch, 'compile'):
+                    self._model.model = torch.compile(
+                        self._model.model, mode='reduce-overhead'
+                    )
+                    _logger.info('SenseVoice: torch.compile 优化已启用')
+            except Exception as _e:
+                _logger.debug(f'torch.compile 不可用: {_e}')
         finally:
             _sys.stdout, _sys.stderr = _old_stdout, _old_stderr
 
@@ -87,15 +99,15 @@ class SenseVoiceBackend:
     def flush(self) -> Optional[ASRResult]:
         if not self._running or self._model is None:
             return None
-
+        t0 = time.time()
         with self._lock:
             buf_len = len(self._audio_buffer)
             if buf_len < self._min_audio:
-                _logger.debug(f'sensevoice flush: 音频不足 ({buf_len})')
                 return None
             audio_for_flush = self._audio_buffer.copy()
+        t_copy = time.time()
 
-        _logger.debug(f'sensevoice flush: buffer={buf_len}')
+        _logger.debug(f'sensevoice flush: buffer={buf_len} (copy: {(t_copy-t0)*1000:.0f}ms)')
         text = self._transcribe(audio_for_flush)
 
         with self._lock:
@@ -124,24 +136,32 @@ class SenseVoiceBackend:
         import sys as _sys
         from io import StringIO as _StringIO
 
+        t0 = time.time()
+        # SenseVoice 期望 float32，范围 [-1, 1]
+        clipped = np.clip(audio, -1.0, 1.0).astype(np.float32)
+        t_prep = time.time()
+
         # 抑制输出（modelscope 进度条可能在推理时闪现）
         _old_stdout, _old_stderr = _sys.stdout, _sys.stderr
         _sys.stdout = _sys.stderr = _StringIO()
 
         try:
-            # SenseVoice 期望 float32，范围 [-1, 1]
-            clipped = np.clip(audio, -1.0, 1.0).astype(np.float32)
-
             result = self._model.generate(
                 input=clipped,
-                language='auto',     # auto 检测语言，SenseVoice 会自动选 zh
-                use_itn=True,        # ITN 负责标点/数字归一化
+                language='auto',
+                use_itn=True,
             )
         except Exception as e:
             _logger.error(f'SenseVoice 转写错误: {e}')
             return ''
         finally:
             _sys.stdout, _sys.stderr = _old_stdout, _old_stderr
+            t_done = time.time()
+
+        prep_ms = (t_prep - t0) * 1000
+        infer_ms = (t_done - t_prep) * 1000
+        total_ms = (t_done - t0) * 1000
+        _logger.debug(f'sensevoice timing: prep={prep_ms:.0f}ms infer={infer_ms:.0f}ms total={total_ms:.0f}ms (samples={len(audio)})')
 
         if not result or len(result) == 0:
             return ''

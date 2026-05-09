@@ -329,18 +329,17 @@ class DictationEngine:
 
     def stop(self):
         """停止听写"""
+        self._t_stop = time.time()
         _logger.debug(f'stop() called, current state={self._state}')
         if self._state != State.LISTENING:
             return
 
         self._running = False
-        _logger.debug('stop() setting _running=False')
-
         # 停止音频采集
         if self._audio:
-            _logger.debug('stop() calling _audio.stop()')
             self._audio.stop()
             self._audio = None
+        _logger.debug(f'stop: audio stopped in {(time.time()-self._t_stop)*1000:.0f}ms')
 
         self._set_state(State.FLUSHING)
 
@@ -359,7 +358,7 @@ class DictationEngine:
             chunk_count = 0
             for chunk in source:
                 if not self._running:
-                    _logger.debug(f'_run_loop: _running=False, 退出, 处理了 {chunk_count} 个 chunk')
+                    _logger.debug(f'_run_loop: _running=False, 退出, 处理了 {chunk_count} 个 chunk (loop lag: {(time.time()-self._t_stop)*1000:.0f}ms)')
                     break
                 chunk_count += 1
                 if chunk_count <= 3 or chunk_count % 10 == 0:

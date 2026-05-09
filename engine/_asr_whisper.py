@@ -11,6 +11,7 @@ import tempfile
 import shutil
 import threading
 import wave
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -61,6 +62,10 @@ class WhisperCppBackend:
         self._model_path = self._get_model_path()
         if not self._model_path.exists():
             self._download_model()
+
+        # 预热：跑一次空推理，把模型加载到系统缓存 + 编译 Metal shader
+        _logger.debug('whisper warm-up (模型加载 + Metal 初始化)...')
+        self._transcribe(np.zeros(16000, dtype=np.float32))
         _logger.debug(f'whisper.cpp 就绪 ({self.model_size})')
 
     def start(self):
@@ -79,13 +84,15 @@ class WhisperCppBackend:
     def flush(self) -> Optional[ASRResult]:
         if not self._running:
             return None
+        t0 = time.time()
         with self._lock:
             buf_len = len(self._audio_buffer)
             if buf_len < self._min_audio:
                 return None
             audio_for_flush = self._audio_buffer.copy()
+        t_copy = time.time()
 
-        _logger.debug(f'whisper flush: buffer={buf_len}')
+        _logger.debug(f'whisper flush: buffer={buf_len} (copy: {(t_copy-t0)*1000:.0f}ms)')
         text = self._transcribe(audio_for_flush)
         with self._lock:
             self._audio_buffer = np.array([], dtype=np.float32)
@@ -106,18 +113,27 @@ class WhisperCppBackend:
         gc.collect()
 
     def _transcribe(self, audio: np.ndarray) -> str:
+        t0 = time.time()
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             wav_path = f.name
         try:
             with wave.open(wav_path, 'wb') as wf:
                 wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(self._sample_rate)
                 wf.writeframes((np.clip(audio, -1, 1) * 32767).astype(np.int16).tobytes())
+            t_wav = time.time()
 
             result = subprocess.run(
                 [self._whisper_bin, '-m', str(self._model_path), '-f', wav_path,
                  '-l', self.language, '--no-timestamps', '-nt', '--no-prints', '-bs', '1'],
                 capture_output=True, text=True, timeout=120,
             )
+            t_done = time.time()
+
+            wav_ms = (t_wav - t0) * 1000
+            infer_ms = (t_done - t_wav) * 1000
+            total_ms = (t_done - t0) * 1000
+            _logger.debug(f'whisper timing: wav={wav_ms:.0f}ms infer={infer_ms:.0f}ms total={total_ms:.0f}ms (samples={len(audio)})')
+
             if result.returncode != 0:
                 _logger.error(f'whisper-cli error: {result.stderr}')
                 return ''

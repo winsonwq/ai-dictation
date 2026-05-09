@@ -198,7 +198,7 @@ class MicrophoneCapture:
         """持续读取直到 stop()"""
         _logger.debug('read_all() 开始')
         while self._running:
-            chunk = self.read(timeout=1.0)
+            chunk = self.read(timeout=0.1)  # 100ms timeout，减少停止延迟
             if chunk is not None:
                 yield chunk
         _logger.debug('read_all() 结束')
