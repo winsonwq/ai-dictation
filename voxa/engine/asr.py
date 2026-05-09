@@ -47,10 +47,10 @@ class ASREngine:
         self._engine_name = engine
 
         if engine == 'whisper':
-            from engine._asr_whisper import WhisperCppBackend
+            from ._asr_whisper import WhisperCppBackend
             self._backend = WhisperCppBackend(**kwargs)
         elif engine == 'sensevoice':
-            from engine._asr_sensevoice import SenseVoiceBackend
+            from ._asr_sensevoice import SenseVoiceBackend
             language = kwargs.pop('language', 'zh')  # SenseVoice 只关心 language
             self._backend = SenseVoiceBackend(language=language)
         else:

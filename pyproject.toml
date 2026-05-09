@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voxa-core"
+version = "0.1.0"
+description = "AI 听写引擎 - 事件驱动的语音转文字核心"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "winsonwq", email = "winsonwq@example.com"}
+]
+keywords = ["asr", "whisper", "voice", "dictation", "speech-to-text"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "numpy>=1.21.0",
+    "sounddevice>=0.4.0",
+    "torch>=2.0.0",
+    "openai>=1.0.0",
+    "rich>=0.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+voxa = "voxa.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/winsonwq/voxa"
+Documentation = "https://github.com/winsonwq/voxa#readme"
+Repository = "https://github.com/winsonwq/voxa"
+
+[tool.setuptools]
+packages = ["voxa", "voxa.engine"]

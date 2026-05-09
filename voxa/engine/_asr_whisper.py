@@ -15,7 +15,7 @@ from typing import Optional
 
 import numpy as np
 
-from engine.asr import ASRResult
+from .asr import ASRResult
 
 _logger = logging.getLogger('dictation.asr.whisper')
 
