@@ -1,9 +1,15 @@
-silero-vad>=1.0.0
+# ONNX Runtime 音频依赖（无 PyTorch）
 sounddevice>=0.4.0
 numpy>=1.24.0
 openai>=1.0.0
 rich>=13.0.0
-torch>=2.0.0
+onnxruntime>=1.18.0
+sentencepiece>=0.2.0
 huggingface-hub>=0.20.0
-funasr>=1.0.0
 
+# SenseVoice ONNX（包含 ASR + VAD）
+sensevoice-onnx>=1.1.0
+
+# 可选：whisper.cpp 运行时（如果用 whisper 引擎）
+# brew install whisper-cpp  # macOS
+# apt install libwhisper  # Linux

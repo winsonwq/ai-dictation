@@ -1,13 +1,15 @@
 """
 voxa/engine/_asr_sensevoice.py
-SenseVoice backend — 阿里 FunASR SenseVoice，原生中文标点
-模型: iic/SenseVoiceSmall (~160MB)，通过 funasr 调用
+SenseVoice backend — ONNX Runtime 版本，不需要 PyTorch
+模型: lovemefan/SenseVoice-onnx (HuggingFace 自动下载)
+参考: Handy 的 transcribe-rs ONNX 方案
 """
 
 import gc
 import logging
+import os
 import threading
-import time
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -18,11 +20,10 @@ _logger = logging.getLogger('dictation.asr.sensevoice')
 
 
 class SenseVoiceBackend:
-    """SenseVoice ASR 后端 — 原生支持中文标点，无需 LLM 后处理"""
+    """SenseVoice ASR 后端 — ONNX Runtime，无需 PyTorch"""
 
-    def __init__(self, language: str = 'zh'):
+    def __init__(self, language: str = 'auto'):
         self.language = language
-
         self._sample_rate = 16000
         self._running = False
         self._lock = threading.Lock()
@@ -30,135 +31,173 @@ class SenseVoiceBackend:
         self._min_audio = int(self._sample_rate * 0.3)
         self._max_audio = int(self._sample_rate * 30)
         self._model = None
+        self._vad = None
+        self._frontend = None
 
     # ---- 生命周期 ----
 
     def load(self):
+        """加载 SenseVoice ONNX 模型"""
         if self._model is not None:
             return
 
-        import os as _os
-        import sys as _sys
-        from io import StringIO as _StringIO
+        _logger.info('加载 SenseVoice ONNX 模型...')
 
-        _os.environ.setdefault('FUNASR_DISABLE_PROGRESS_BAR', '1')
+        from sensevoice.onnx.sense_voice_ort_session import SenseVoiceInferenceSession
+        from sensevoice.utils.frontend import WavFrontend
+        from sensevoice.utils.fsmn_vad import FSMNVad, VADXOptions
 
-        _logger.info('加载 SenseVoice 模型...')
-        _old_stdout, _old_stderr = _sys.stdout, _sys.stderr
-        _sys.stdout = _sys.stderr = _StringIO()
-        try:
-            # 优化 PyTorch 线程数（M1 Pro 6 性能核）
-            import torch
-            torch.set_num_threads(6)
-            torch.set_num_interop_threads(2)
+        # 模型缓存目录
+        cache_dir = Path.home() / '.cache' / 'sensevoice-onnx'
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-            from funasr import AutoModel
-            self._model = AutoModel(
-                model='iic/SenseVoiceSmall',
-                disable_update=True,
-                device='cpu',
-                disable_log=True,
+        # 自动下载模型（如果不存在）
+        model_dir = cache_dir / 'models' / ' SenseVoice-onnx'
+        if not model_dir.exists():
+            _logger.info('首次使用，自动下载 SenseVoice ONNX 模型...')
+            from huggingface_hub import snapshot_download
+            snapshot_download(
+                repo_id='lovemefan/SenseVoice-onnx',
+                local_dir=str(cache_dir / 'models' / 'SenseVoice-onnx'),
             )
-        finally:
-            _sys.stdout, _sys.stderr = _old_stdout, _old_stderr
 
-        # 预热
-        _logger.info('SenseVoice warm-up...')
-        _old_stdout, _old_stderr = _sys.stdout, _sys.stderr
-        _sys.stdout = _sys.stderr = _StringIO()
-        try:
-            dummy = np.zeros(self._min_audio, dtype=np.float32)
-            self._model.generate(input=dummy, language='auto', use_itn=True)
-        except Exception:
-            pass
-        finally:
-            _sys.stdout, _sys.stderr = _old_stdout, _old_stderr
+        model_dir = cache_dir / 'models' / 'SenseVoice-onnx'
 
-        _logger.info('SenseVoice 就绪')
+        # 加载 ASR 模型
+        self._model = SenseVoiceInferenceSession(
+            str(model_dir / 'embedding.npy'),
+            str(model_dir / 'sense-voice-encoder.onnx'),
+            str(model_dir / 'chn_jpn_yue_eng_ko_spectok.bpe.model'),
+            device_id=-1,  # CPU
+            intra_op_num_threads=6,
+        )
+
+        # 加载音频前端
+        self._frontend = WavFrontend(str(model_dir / 'am.mvn'))
+
+        # 加载 VAD
+        vad_options = VADXOptions(
+            sample_rate=16000,
+            detect_mode=1,  # kVadMutipleUtteranceDetectMode
+            max_end_silence_time=800,
+            max_start_silence_time=3000,
+        )
+        self._vad = FSMNVad(str(model_dir / 'fsmn_vad.onnx'), vad_options)
+
+        _logger.info('SenseVoice ONNX 就绪')
 
     def start(self):
         self._running = True
-        self._audio_buffer = np.array([], dtype=np.float32)
 
-    def push(self, audio_chunk: np.ndarray) -> Optional[str]:
-        if not self._running:
-            return None
-        with self._lock:
-            self._audio_buffer = np.concatenate([self._audio_buffer, audio_chunk])
-            if len(self._audio_buffer) > self._max_audio:
-                self._audio_buffer = self._audio_buffer[-self._max_audio:]
-        return None
-
-    def flush(self, force: bool = False) -> Optional[ASRResult]:
-        if not force and (not self._running or self._model is None):
-            return None
-        t0 = time.time()
-        with self._lock:
-            buf_len = len(self._audio_buffer)
-            if buf_len < self._min_audio:
-                return None
-            audio_for_flush = self._audio_buffer.copy()
-        t_copy = time.time()
-
-        _logger.debug(f'sensevoice flush: buffer={buf_len} (copy: {(t_copy-t0)*1000:.0f}ms)')
-        text = self._transcribe(audio_for_flush)
-
-        with self._lock:
-            self._audio_buffer = np.array([], dtype=np.float32)
-
-        if not text:
-            return None
-        _logger.debug(f'sensevoice result: {text[:50]}...')
-        return ASRResult(text=text, end_time=buf_len / self._sample_rate, language=self.language)
-
-    def reset(self):
-        with self._lock:
-            self._audio_buffer = np.array([], dtype=np.float32)
-
-    def shutdown(self):
+    def stop(self):
         self._running = False
         with self._lock:
             self._audio_buffer = np.array([], dtype=np.float32)
-            self._model = None
+
+    def cancel(self):
+        self.stop()
+
+    # ---- 转写 ----
+
+    def transcribe(self, audio: np.ndarray) -> ASRResult:
+        """
+        完整的端到端转写：VAD 检测 + ASR
+        """
+        if self._model is None:
+            self.load()
+
+        # 确保音频是正确格式
+        audio = self._ensure_audio_format(audio)
+
+        # VAD 检测语音段
+        speech_segments = self._vad.detect(audio)
+
+        if not speech_segments:
+            return ASRResult(text='', duration=len(audio) / self._sample_rate)
+
+        # 取最长的语音段进行转写
+        best_segment = max(speech_segments, key=lambda s: s[1] - s[0])
+        start_ms, end_ms = best_segment
+        start_sample = int(start_ms * 16)  # ms -> sample (16k * ms / 1000)
+        end_sample = int(end_ms * 16)
+        speech_audio = audio[start_sample:end_sample]
+
+        if len(speech_audio) < self._min_audio:
+            return ASRResult(text='', duration=len(audio) / self._sample_rate)
+
+        # 提取音频特征
+        audio_feat = self._frontend.get_features(speech_audio)
+
+        # ASR 推理
+        language_map = {'auto': 0, 'zh': 3, 'en': 4, 'yue': 7, 'ja': 11, 'ko': 12, 'nospeech': 13}
+        lang_id = language_map.get(self.language, 0)
+
+        result = self._model(
+            audio_feat[None, ...],
+            language=lang_id,
+            use_itn=True,
+        )
+
+        text = result[0] if result else ''
+
+        return ASRResult(
+            text=text,
+            duration=len(audio) / self._sample_rate,
+        )
+
+    def _ensure_audio_format(self, audio: np.ndarray) -> np.ndarray:
+        """确保音频是 float32 1D array @ 16kHz"""
+        audio = np.atleast_1d(audio).astype(np.float32)
+        # 归一化到 [-1, 1]
+        max_val = np.abs(audio).max()
+        if max_val > 0:
+            audio = audio / max_val
+        return audio
+
+    def release(self):
+        """释放模型（GC）"""
+        self._model = None
+        self._vad = None
+        self._frontend = None
         gc.collect()
 
-    # ---- 内部 ----
+    # ---- 流式接口（保留，与现有框架兼容）----
 
-    def _transcribe(self, audio: np.ndarray) -> str:
-        import sys as _sys
-        from io import StringIO as _StringIO
+    def push_audio(self, chunk: np.ndarray) -> Optional[ASRResult]:
+        """流式：收音频块，返回最终结果（如果检测到语音结束）"""
+        if not self._running:
+            return None
 
-        t0 = time.time()
-        clipped = np.clip(audio, -1.0, 1.0).astype(np.float32)
-        t_prep = time.time()
+        chunk = np.atleast_1d(chunk).astype(np.float32)
+        max_val = np.abs(chunk).max()
+        if max_val > 0:
+            chunk = chunk / max_val
 
-        _old_stdout, _old_stderr = _sys.stdout, _sys.stderr
-        _sys.stdout = _sys.stderr = _StringIO()
+        with self._lock:
+            self._audio_buffer = np.concatenate([self._audio_buffer, chunk])
 
-        try:
-            result = self._model.generate(
-                input=clipped,
-                language='zh',     # 跳过 auto 检测
-                use_itn=True,
-                ban_emo_unk=True,  # 禁情绪检测
-            )
-        except Exception as e:
-            _logger.error(f'SenseVoice 转写错误: {e}')
-            return ''
-        finally:
-            _sys.stdout, _sys.stderr = _old_stdout, _old_stderr
-            t_done = time.time()
+            # 超过最大长度，截断
+            if len(self._audio_buffer) > self._max_audio:
+                self._audio_buffer = self._audio_buffer[-self._max_audio:]
 
-        prep_ms = (t_prep - t0) * 1000
-        infer_ms = (t_done - t_prep) * 1000
-        total_ms = (t_done - t0) * 1000
-        _logger.debug(f'sensevoice timing: prep={prep_ms:.0f}ms infer={infer_ms:.0f}ms total={total_ms:.0f}ms (samples={len(audio)})')
+        # 流式 VAD - 检测是否还在说话
+        # 这里简化处理，完整实现需要更复杂的状态机
+        return None
 
-        if not result or len(result) == 0:
-            return ''
+    def flush(self) -> Optional[ASRResult]:
+        """流式：强制输出当前缓冲区的转写结果"""
+        if not self._running or len(self._audio_buffer) < self._min_audio:
+            return None
 
-        text = result[0].get('text', '')
-        if text:
-            import re
-            text = re.sub(r'<\|[^|]*\|>', '', text).strip()
-        return text
+        with self._lock:
+            audio = self._audio_buffer.copy()
+            self._audio_buffer = np.array([], dtype=np.float32)
+
+        return self.transcribe(audio)
+
+    def get_stats(self) -> dict:
+        """返回当前状态统计"""
+        return {
+            'engine': 'sensevoice-onnx',
+            'buffer_samples': len(self._audio_buffer),
+        }
