@@ -6,3 +6,9 @@ models/
 .venv/
 dictation.log
 whisper-worker
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.egg-info/

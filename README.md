@@ -1,103 +1,139 @@
 # Voxa
 
-命令行 AI 听写工具，支持多引擎本地语音转文字。
+事件驱动的 AI 听写引擎，支持多引擎本地语音转文字。
 
-**引擎**：whisper.cpp (Metal GPU, ~0.4s) / SenseVoice (CPU, 自带标点, ~0.8s)
+**特点**：
+- 🎯 零依赖 Python 包（`pip install voxa-core`）
+- 🔧 双引擎：whisper.cpp (GPU) / SenseVoice ONNX (CPU)
+- 🌊 流式转写 + HTTP API
+- 📦 无 PyTorch！使用 ONNX Runtime
 
 ## 快速开始
 
-### 1. 安装 whisper.cpp（macOS）
+### 安装
 
 ```bash
-brew install whisper-cpp
+pip install voxa-core
 ```
 
-> Linux/Windows: 从 [whisper.cpp](https://github.com/ggerganov/whisper.cpp) 源码编译安装
+### Python API
 
-### 2. 安装 Python 依赖
+```python
+from voxa import VoxaCore
+
+core = VoxaCore(engine='sensevoice')
+core.on('asr.final', lambda text: print(f"转写: {text}"))
+core.start()
+```
+
+### HTTP API
 
 ```bash
-pip install -r requirements.txt
+pip install voxa-core
+voxa serve  # 启动 HTTP 服务器
 
-# SenseVoice 引擎需要 (Python 3.12+)
-python3.12 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+# 转写音频
+curl -X POST http://localhost:8765/api/transcribe \
+  -F "audio=@recording.wav"
 ```
 
-### 3. 运行
+### CLI
 
 ```bash
-python main.py                    # whisper small (Metal GPU, 0.4-0.5s)
-python main.py --model medium     # 更高精度
-.venv/bin/python main.py --engine sensevoice  # 自带标点
+voxa --engine sensevoice  # 开始听写（按 Ctrl+C 停止）
 ```
 
-按空格开始听写，再按空格停止。
+## 引擎
 
-## 流式转写模式
-
-```bash
-python main.py --stream              # 启用流式转写（每 2s 刷新一次）
-python main.py --stream --flush-interval 1.0  # 更快的刷新间隔
-```
-
-流式转写会在你说话过程中实时显示转写结果，而不是等到说完后才显示。适合长段演讲场景。
-
-## 性能
-
-| 引擎 | 模型 | 短句 (~3s) | 长句 (~15s) | 标点 |
-|------|------|-----------|------------|------|
-| whisper | small (487MB) | ~0.2s | ~0.5s | 无 |
-| whisper | medium (1.5GB) | ~0.4s | ~1.0s | 无 |
-| SenseVoice | Small (160MB) | ~0.4s | ~0.8s | ✓ |
-
-## 命令行参数
-
-| 参数 | 说明 |
-|------|------|
-| `--engine` | ASR 引擎: `whisper` (默认) 或 `sensevoice` |
-| `--model` | 模型大小: tiny/base/small/medium/large（仅 whisper） |
-| `--polish` | 启用 LLM 润色（默认关闭） |
-| `--input-file <file>` | 从文件读取音频（WAV 16kHz mono） |
-| `--check` | 仅检查环境 |
-| `--debug` | 调试模式 |
-| `--stream` | 启用流式转写（边说边转写） |
-| `--flush-interval <秒>` | 流式转写刷新间隔（默认 2.0） |
-
-## 架构
-
-```
-麦克风 → Silero VAD → audio buffer (float32)
-                         │
-                    [按空格停止]
-                         │
-              ┌──────────┴──────────┐
-              ↓                     ↓
-        WhisperCppBackend     SenseVoiceBackend
-              │                     │
-              ↓                     ↓
-        whisper-worker         funasr (PyTorch)
-        (C, 常驻, stdin管道)   (Python, 常驻内存)
-              │                     │
-              ↓                     ↓
-        whisper.cpp            SenseVoiceSmall
-        (Metal GPU)            (CPU)
-```
+| 引擎 | 加速 | 模型大小 | 标点 | 依赖 |
+|------|------|---------|------|------|
+| whisper.cpp | GPU (Metal/CUDA) | ~140MB (small) | ❌ | libwhisper |
+| SenseVoice | CPU (ONNX Runtime) | ~230MB (int8) | ✅ | onnxruntime |
 
 ## 项目结构
 
 ```
 voxa/
-├── main.py                # CLI 入口
-├── whisper-worker.c       # 微型 C 常驻进程
-├── engine/
-│   ├── asr.py             # ASR 入口（后端可切换）
-│   ├── _asr_whisper.py    # whisper.cpp 后端
-│   ├── _asr_sensevoice.py # SenseVoice 后端
-│   ├── audio.py           # 音频采集
-│   ├── vad.py             # Silero VAD
-│   ├── stream_transcriber.py  # 流式转写组件
-│   └── polish.py          # LLM 润色
-├── requirements.txt
-└── SPEC.md
+├── voxa/
+│   ├── __init__.py      # 导出 VoxaCore, events
+│   ├── core.py          # VoxaCore 事件驱动引擎
+│   ├── events.py        # EventEmitter
+│   ├── server.py        # HTTP 服务器
+│   ├── cli.py           # CLI 入口
+│   └── engine/
+│       ├── asr.py       # ASR 引擎抽象
+│       ├── _asr_whisper.py    # whisper.cpp 后端
+│       ├── _asr_sensevoice.py # SenseVoice ONNX 后端
+│       └── vad.py       # FSMN VAD (ONNX)
+├── tests/
+│   ├── test_core.py     # 核心测试
+│   └── test_http.py     # HTTP API 测试
+├── pyproject.toml
+└── requirements.txt
 ```
+
+## 架构
+
+```
+用户音频
+    ↓
+┌─────────────────────────────────────┐
+│           VoxaCore                  │
+│  (事件驱动引擎，EventEmitter)        │
+└─────────────────────────────────────┘
+    ↓
+┌─────────────┐    ┌─────────────────┐
+│   VAD       │ →  │   ASR Engine    │
+│  FSMN ONNX  │    │ (whisper/Sense) │
+└─────────────┘    └─────────────────┘
+    ↓
+事件: vad.speech_start, vad.speech_end,
+     asr.partial, asr.final, error
+```
+
+## 安装依赖
+
+### macOS
+
+```bash
+brew install whisper-cpp
+pip install voxa-core
+```
+
+### Linux
+
+```bash
+# 安装 whisper.cpp
+git clone https://github.com/ggerganov/whisper.cpp
+cd whisper.cpp && mkdir build && cd build
+cmake .. && make -j && sudo make install
+
+pip install voxa-core
+```
+
+### Windows
+
+```powershell
+# 安装 whisper.cpp (需要 MSYS2 或 WSL)
+# 或者使用 WSL
+
+pip install voxa-core
+```
+
+## 开发
+
+```bash
+git clone https://github.com/winsonwq/voxa
+cd voxa
+pip install -e .
+
+# 运行测试
+python -m pytest tests/
+
+# 启动 HTTP 服务器
+python -m voxa serve
+```
+
+## 许可证
+
+MIT
