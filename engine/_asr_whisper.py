@@ -1,17 +1,15 @@
 """
 engine/_asr_whisper.py
-Whisper.cpp backend — whisper-cli subprocess (Metal GPU)
+Whisper.cpp backend — whisper-worker 常驻进程 (Metal GPU, 模型常驻)
 """
 
 import os
 import gc
 import logging
 import subprocess
-import tempfile
+import struct
 import shutil
 import threading
-import wave
-import time
 from pathlib import Path
 from typing import Optional
 
@@ -33,7 +31,7 @@ MODEL_FILES = {
 
 
 class WhisperCppBackend:
-    """whisper.cpp ASR 后端 — whisper-cli subprocess"""
+    """whisper.cpp ASR 后端 — whisper-worker 常驻进程"""
 
     def __init__(
         self,
@@ -52,21 +50,27 @@ class WhisperCppBackend:
         self._audio_buffer = np.array([], dtype=np.float32)
         self._min_audio = int(self._sample_rate * 0.5)
         self._max_audio = int(self._sample_rate * 30)
-        self._whisper_bin: Optional[str] = None
-        self._model_path: Optional[Path] = None
+        self._worker: Optional[subprocess.Popen] = None
 
     def load(self):
-        self._whisper_bin = shutil.which('whisper-cli')
-        if self._whisper_bin is None:
-            raise RuntimeError('未找到 whisper-cli，请先: brew install whisper-cpp')
-        self._model_path = self._get_model_path()
-        if not self._model_path.exists():
+        if self._worker is not None:
+            return
+
+        worker_bin = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'whisper-worker')
+        if not os.path.exists(worker_bin):
+            raise RuntimeError(f'未找到 whisper-worker: {worker_bin}，请先编译')
+
+        model_path = self._get_model_path()
+        if not model_path.exists():
             self._download_model()
 
-        # 预热：跑一次空推理，把模型加载到系统缓存 + 编译 Metal shader
-        _logger.debug('whisper warm-up (模型加载 + Metal 初始化)...')
-        self._transcribe(np.zeros(16000, dtype=np.float32))
-        _logger.debug(f'whisper.cpp 就绪 ({self.model_size})')
+        self._worker = subprocess.Popen(
+            [worker_bin, str(model_path)],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+
+        line = self._worker.stdout.readline().decode().strip()
+        _logger.debug(f'whisper-worker 就绪: {line} ({self.model_size})')
 
     def start(self):
         self._running = True
@@ -82,15 +86,15 @@ class WhisperCppBackend:
         return None
 
     def flush(self) -> Optional[ASRResult]:
-        if not self._running:
+        if not self._running or self._worker is None:
             return None
-        t0 = time.time()
+        import time as _time; t0 = _time.time()
         with self._lock:
             buf_len = len(self._audio_buffer)
             if buf_len < self._min_audio:
                 return None
             audio_for_flush = self._audio_buffer.copy()
-        t_copy = time.time()
+        t_copy = _time.time()
 
         _logger.debug(f'whisper flush: buffer={buf_len} (copy: {(t_copy-t0)*1000:.0f}ms)')
         text = self._transcribe(audio_for_flush)
@@ -108,45 +112,44 @@ class WhisperCppBackend:
 
     def shutdown(self):
         self._running = False
+        if self._worker:
+            try:
+                self._worker.stdin.write(b'EXIT\n')
+                self._worker.stdin.flush()
+                self._worker.wait(timeout=3)
+            except Exception:
+                self._worker.kill()
+            self._worker = None
         with self._lock:
             self._audio_buffer = np.array([], dtype=np.float32)
         gc.collect()
 
     def _transcribe(self, audio: np.ndarray) -> str:
-        t0 = time.time()
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
-            wav_path = f.name
+        import time as _time
+        t0 = _time.time()
+
         try:
-            with wave.open(wav_path, 'wb') as wf:
-                wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(self._sample_rate)
-                wf.writeframes((np.clip(audio, -1, 1) * 32767).astype(np.int16).tobytes())
-            t_wav = time.time()
+            audio_f32 = audio.astype(np.float32)
+            cmd = f'TRANSCRIBE {self.language} {len(audio_f32)}\n'.encode()
+            self._worker.stdin.write(cmd)
+            self._worker.stdin.write(audio_f32.tobytes())
+            self._worker.stdin.flush()
+            t_send = _time.time()
 
-            result = subprocess.run(
-                [self._whisper_bin, '-m', str(self._model_path), '-f', wav_path,
-                 '-l', self.language, '--no-timestamps', '-nt', '--no-prints', '-bs', '1'],
-                capture_output=True, text=True, timeout=120,
-            )
-            t_done = time.time()
+            line = self._worker.stdout.readline().decode().strip()
+            t_done = _time.time()
 
-            wav_ms = (t_wav - t0) * 1000
-            infer_ms = (t_done - t_wav) * 1000
+            send_ms = (t_send - t0) * 1000
+            infer_ms = (t_done - t_send) * 1000
             total_ms = (t_done - t0) * 1000
-            _logger.debug(f'whisper timing: wav={wav_ms:.0f}ms infer={infer_ms:.0f}ms total={total_ms:.0f}ms (samples={len(audio)})')
+            _logger.debug(f'whisper timing: send={send_ms:.0f}ms infer={infer_ms:.0f}ms total={total_ms:.0f}ms (samples={len(audio)})')
 
-            if result.returncode != 0:
-                _logger.error(f'whisper-cli error: {result.stderr}')
-                return ''
-            return ''.join(l.strip() for l in result.stdout.strip().split('\n') if l.strip())
-        except subprocess.TimeoutExpired:
-            _logger.error('whisper-cli timeout')
+            if line.startswith('RESULT '):
+                return line[7:]
             return ''
         except Exception as e:
-            _logger.error(f'transcribe error: {e}')
+            _logger.error(f'whisper error: {e}')
             return ''
-        finally:
-            try: os.unlink(wav_path)
-            except OSError: pass
 
     def _get_model_path(self) -> Path:
         filename = MODEL_FILES.get(self.model_size, f'ggml-{self.model_size}.bin')

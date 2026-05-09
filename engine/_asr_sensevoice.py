@@ -138,8 +138,9 @@ class SenseVoiceBackend:
         try:
             result = self._model.generate(
                 input=clipped,
-                language='auto',
+                language='zh',     # 跳过 auto 检测
                 use_itn=True,
+                ban_emo_unk=True,  # 禁情绪检测
             )
         except Exception as e:
             _logger.error(f'SenseVoice 转写错误: {e}')
