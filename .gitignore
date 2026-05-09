@@ -4,3 +4,4 @@ logs/
 models/
 .DS_Store
 .venv/
+dictation.log
