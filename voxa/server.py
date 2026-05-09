@@ -1,27 +1,23 @@
 """
 voxa/server.py
-HTTP Server - 供外部集成的 HTTP 接口
-
-启动方式:
-    python -m voxa.server
-    python -m voxa.server --port 8765
+HTTP Server - 简化的转写接口
 
 API:
-    POST /api/start          开始听写
-    POST /api/stop           停止听写
-    GET  /api/status         当前状态
-    GET  /api/health         健康检查
-
-    SSE /events              实时事件流
+    POST /api/transcribe        单次转写（上传音频文件）
+    POST /api/transcribe/stream 流式转写（SSE 事件流）
+    GET  /api/health            健康检查
 """
 
 import sys
+import os
 import json
+import tempfile
 import threading
 import argparse
 import logging
+import wave
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
 from typing import Optional
 
 _logger = logging.getLogger('voxa.server')
@@ -31,7 +27,7 @@ class VoxaServer:
     """
     Voxa HTTP Server
 
-    提供 REST API + SSE 事件流
+    提供两个转写接口，无状态设计
     """
 
     def __init__(self, core, port: int = 8765):
@@ -40,63 +36,22 @@ class VoxaServer:
         self._sse_clients: list = []
         self._server: Optional[HTTPServer] = None
 
-        # 订阅核心事件，广播给所有 SSE 客户端
-        self.core.on('state_change', self._broadcast_state)
-        self.core.on('asr.partial', lambda text: self._broadcast('asr.partial', {'text': text}))
-        self.core.on('asr.final', self._broadcast_asr_final)
-        self.core.on('polish.result', lambda text: self._broadcast('polish.result', {'text': text}))
-        self.core.on('vad.speech_start', lambda: self._broadcast('vad.speech_start', {}))
-        self.core.on('vad.speech_end', lambda: self._broadcast('vad.speech_end', {}))
-        self.core.on('error', lambda msg: self._broadcast('error', {'message': msg}))
-
-    def _broadcast_state(self, state):
-        self._broadcast('state_change', {'state': state.value})
-
-    def _broadcast_asr_final(self, result):
-        self._broadcast('asr.final', {
-            'text': result.text,
-            'language': result.language,
-            'avg_logprob': result.avg_logprob,
-        })
-
-    def _broadcast(self, event: str, data: dict):
-        """向所有 SSE 客户端广播消息"""
-        message = f"event: {event}\ndata: {json.dumps(data)}\n\n"
-        dead = []
-        for client in self._sse_clients:
-            try:
-                client['queue'].put(message)
-            except Exception:
-                dead.append(client)
-        for client in dead:
-            self._sse_clients.remove(client)
-
-    def add_sse_client(self, client):
-        self._sse_clients.append(client)
-
-    def remove_sse_client(self, client):
-        if client in self._sse_clients:
-            self._sse_clients.remove(client)
-
     def start(self):
-        """在后台线程启动服务器，端口被占用时自动选择下一个可用端口"""
         self._server, actual_port = self._find_available_port()
         if self._server is None:
             raise RuntimeError(f'无法找到可用端口 ({self.port} - {self.port + 99})')
         self.port = actual_port
-        self._server_port = actual_port
         _logger.info(f'HTTP Server 启动: http://localhost:{actual_port}')
         self._thread = threading.Thread(target=self._serve_forever, daemon=True)
         self._thread.start()
 
     def _find_available_port(self):
-        """找一个可用端口，返回 (server, port)"""
         for port in range(self.port, self.port + 100):
             try:
                 server = HTTPServer(('localhost', port), self._make_handler())
                 return server, port
             except OSError as e:
-                if e.errno == 98:  # Address already in use
+                if e.errno == 98:
                     continue
                 raise
         return None, None
@@ -105,8 +60,8 @@ class VoxaServer:
         self._server.serve_forever()
 
     def _make_handler(self):
-        """创建请求处理器"""
         server = self
+        core = self.core
 
         class Handler(BaseHTTPRequestHandler):
             def log_message(self, format, *args):
@@ -127,6 +82,9 @@ class VoxaServer:
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
 
+            def send_error_json(self, code: int, message: str):
+                self.send_json(code, {'error': message})
+
             def do_OPTIONS(self):
                 self.send_response(200)
                 self.send_header('Access-Control-Allow-Origin', '*')
@@ -137,83 +95,216 @@ class VoxaServer:
             def do_GET(self):
                 parsed = urlparse(self.path)
                 path = parsed.path
-                query = parse_qs(parsed.query)
 
                 if path == '/api/health':
-                    self.send_json(200, {'status': 'ok', 'state': server.core.state.value})
-
-                elif path == '/api/status':
-                    self.send_json(200, {
-                        'state': server.core.state.value,
-                        'is_listening': server.core.is_listening,
-                    })
-
-                elif path == '/events':
-                    # SSE 事件流
-                    import queue
-                    client_queue = queue.Queue()
-                    client = {'queue': client_queue}
-                    server.add_sse_client(client)
-
-                    self.send_sse(200)
-
-                    try:
-                        while True:
-                            msg = client_queue.get(timeout=30)
-                            if msg is None:  # 客户端断开
-                                break
-                            self.wfile.write(msg.encode())
-                            self.wfile.flush()
-                    except Exception:
-                        pass
-                    finally:
-                        server.remove_sse_client(client)
-
+                    self.send_json(200, {'status': 'ok'})
                 else:
-                    self.send_json(404, {'error': 'Not found'})
+                    self.send_error_json(404, 'Not found')
 
             def do_POST(self):
                 parsed = urlparse(self.path)
                 path = parsed.path
 
-                content_length = int(self.headers.get('Content-Length', 0))
-                body = self.rfile.read(content_length) if content_length > 0 else b''
-                try:
-                    data = json.loads(body) if body else {}
-                except json.JSONDecodeError:
-                    self.send_json(400, {'error': 'Invalid JSON'})
+                if path == '/api/transcribe':
+                    self._handle_transcribe(core, server)
+                elif path == '/api/transcribe/stream':
+                    self._handle_transcribe_stream(core, server)
+                else:
+                    self.send_error_json(404, 'Not found')
+
+            def _handle_transcribe(self, core, server):
+                """单次转写：接收音频文件，返回转写结果"""
+                import cgi
+
+                content_type = self.headers.get('Content-Type', '')
+                if 'multipart/form-data' in content_type:
+                    form = cgi.FieldStorage(
+                        fp=self.rfile,
+                        headers=self.headers,
+                        environ={'REQUEST_METHOD': 'POST', 'CONTENT_TYPE': content_type}
+                    )
+                    # Python 3.10 compatibility: use ['audio'] instead of getfile()
+                    if 'audio' not in form:
+                        self.send_error_json(400, '缺少 audio 文件')
+                        return
+                    audio_field = form['audio']
+                    if not hasattr(audio_field, 'file') or audio_field.file is None:
+                        self.send_error_json(400, 'audio 文件无效')
+                        return
+                    audio_data = audio_field.file.read()
+                else:
+                    content_length = int(self.headers.get('Content-Length', 0))
+                    audio_data = self.rfile.read(content_length) if content_length > 0 else b''
+
+                if not audio_data:
+                    self.send_error_json(400, '音频数据为空')
                     return
 
-                if path == '/api/start':
-                    if server.core.is_listening:
-                        self.send_json(200, {'status': 'already_listening'})
-                    else:
-                        # 在独立线程中启动，避免阻塞 HTTP 请求
-                        thread = threading.Thread(target=server.core.start, daemon=True)
-                        thread.start()
-                        self.send_json(200, {'status': 'started'})
+                # 保存到临时文件
+                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
+                    f.write(audio_data)
+                    temp_path = f.name
 
-                elif path == '/api/stop':
-                    # stop() 可能在润色，需要时间，在线程中执行
-                    result = [None]
-                    def do_stop():
-                        result[0] = server.core.stop()
-                    t = threading.Thread(target=do_stop, daemon=True)
+                try:
+                    result_text = [None]
+                    polish_text = [None]
+                    error_msg = [None]
+
+                    def do_transcribe():
+                        try:
+                            from voxa import VoxaCore
+                            _core = VoxaCore(
+                                engine=core.engine,
+                                model_size=core.model_size,
+                                llm_model=core.llm_model,
+                                disable_polish=core.disable_polish,
+                                use_file=temp_path,
+                                streaming=False,
+                            )
+                            _core.on('asr.final', lambda r: result_text.__setitem__(0, r.text))
+                            _core.on('polish.result', lambda t: polish_text.__setitem__(0, t))
+                            _core.on('error', lambda m: error_msg.__setitem__(0, m))
+                            _core.start()
+                            import time
+                            for _ in range(200):
+                                if _core.state.value in ('idle', 'error'):
+                                    break
+                                time.sleep(0.5)
+                            _core.stop()
+                        except Exception as e:
+                            error_msg.__setitem__(0, str(e))
+                            _logger.error(f'转写失败: {e}')
+
+                    t = threading.Thread(target=do_transcribe)
                     t.start()
-                    t.join(timeout=60)
-                    self.send_json(200, {'status': 'stopped', 'text': result[0] or ''})
+                    t.join(timeout=120)
 
-                elif path == '/api/cancel':
-                    server.core.cancel()
-                    self.send_json(200, {'status': 'cancelled'})
+                    if error_msg[0]:
+                        self.send_error_json(500, error_msg[0])
+                        return
 
+                    self.send_json(200, {
+                        'text': result_text[0] or '',
+                        'polished': polish_text[0],
+                    })
+
+                finally:
+                    if os.path.exists(temp_path):
+                        os.unlink(temp_path)
+
+            def _handle_transcribe_stream(self, core, server):
+                """
+                流式转写：接收音频，返回 SSE 事件流
+                与 /api/transcribe 相同，但实时返回 partial 结果
+                """
+                content_type = self.headers.get('Content-Type', '')
+                if 'multipart/form-data' in content_type:
+                    import cgi
+                    form = cgi.FieldStorage(
+                        fp=self.rfile,
+                        headers=self.headers,
+                        environ={'REQUEST_METHOD': 'POST', 'CONTENT_TYPE': content_type}
+                    )
+                    if 'audio' not in form:
+                        self.send_error_json(400, '缺少 audio 文件')
+                        return
+                    audio_field = form['audio']
+                    if not hasattr(audio_field, 'file') or audio_field.file is None:
+                        self.send_error_json(400, 'audio 文件无效')
+                        return
+                    audio_data = audio_field.file.read()
                 else:
-                    self.send_json(404, {'error': 'Not found'})
+                    content_length = int(self.headers.get('Content-Length', 0) or 0)
+                    audio_data = self.rfile.read(content_length) if content_length > 0 else b''
+
+                if not audio_data:
+                    self.send_error_json(400, '音频数据为空')
+                    return
+
+                # 保存到临时文件
+                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
+                    f.write(audio_data)
+                    temp_path = f.name
+
+                try:
+                    result_queue = __import__('queue').Queue()
+                    running = [True]
+
+                    def do_transcribe():
+                        try:
+                            from voxa import VoxaCore
+                            _core = VoxaCore(
+                                engine=core.engine,
+                                model_size=core.model_size,
+                                llm_model=core.llm_model,
+                                disable_polish=core.disable_polish,
+                                use_file=temp_path,
+                                streaming=True,
+                            )
+                            _core.on('asr.partial', lambda t: result_queue.put(('partial', t)))
+                            _core.on('asr.final', lambda r: result_queue.put(('final', r.text)))
+                            _core.on('polish.result', lambda t: result_queue.put(('polish', t)))
+                            _core.on('vad.speech_start', lambda: result_queue.put(('vad_start', '')))
+                            _core.on('vad.speech_end', lambda: result_queue.put(('vad_end', '')))
+                            _core.on('error', lambda m: result_queue.put(('error', m)))
+                            _core.start()
+                            import time
+                            for _ in range(600):
+                                if not running[0]:
+                                    break
+                                if _core.state.value in ('idle', 'error'):
+                                    break
+                                time.sleep(0.5)
+                            _core.stop()
+                        except Exception as e:
+                            _logger.error(f'流式转写失败: {e}')
+                            result_queue.put(('error', str(e)))
+                        finally:
+                            running[0] = False
+
+                    t = threading.Thread(target=do_transcribe)
+                    t.start()
+
+                    # 发送 SSE 响应
+                    self.send_sse(200)
+                    import time as _time
+                    while running[0]:
+                        try:
+                            event_type, data = result_queue.get(timeout=0.5)
+                            if event_type == 'error':
+                                msg = f"event: error\ndata: {json.dumps({'error': data})}\n\n"
+                                self.wfile.write(msg.encode())
+                                self.wfile.flush()
+                                break
+                            elif event_type == 'partial':
+                                msg = f"event: partial\ndata: {json.dumps({'text': data})}\n\n"
+                                self.wfile.write(msg.encode())
+                                self.wfile.flush()
+                            elif event_type == 'final':
+                                msg = f"event: final\ndata: {json.dumps({'text': data})}\n\n"
+                                self.wfile.write(msg.encode())
+                                self.wfile.flush()
+                            elif event_type == 'polish':
+                                msg = f"event: polish\ndata: {json.dumps({'text': data})}\n\n"
+                                self.wfile.write(msg.encode())
+                                self.wfile.flush()
+                                break
+                            elif event_type in ('vad_start', 'vad_end'):
+                                msg = f"event: {event_type}\ndata: {json.dumps({})}\n\n"
+                                self.wfile.write(msg.encode())
+                                self.wfile.flush()
+                        except __import__('queue').Empty:
+                            if not running[0]:
+                                break
+                            continue
+
+                finally:
+                    if os.path.exists(temp_path):
+                        os.unlink(temp_path)
 
         return Handler
 
     def stop(self):
-        """停止服务器"""
         if self._server:
             self._server.shutdown()
 
@@ -221,8 +312,9 @@ class VoxaServer:
 def main():
     parser = argparse.ArgumentParser(description='Voxa HTTP Server')
     parser.add_argument('--port', type=int, default=8765, help='HTTP 端口 (默认 8765)')
-    parser.add_argument('--engine', default='whisper', help='ASR 引擎')
+    parser.add_argument('--engine', default='whisper', choices=['whisper', 'sensevoice'])
     parser.add_argument('--model', default='small', help='模型大小')
+    parser.add_argument('--llm-model', default='qwen/qwen3.5-plus-02-15', help='润色模型')
     parser.add_argument('--no-polish', action='store_true', help='禁用润色')
     parser.add_argument('--debug', action='store_true', help='调试模式')
     args = parser.parse_args()
@@ -235,22 +327,23 @@ def main():
 
     from voxa import VoxaCore
 
+    # VoxaCore 实例，只用于传递配置
     core = VoxaCore(
         engine=args.engine,
         model_size=args.model,
+        llm_model=args.llm_model,
         disable_polish=args.no_polish,
     )
 
     server = VoxaServer(core, port=args.port)
     server.start()
 
-    # 等待服务器真正启动，获取实际端口
-    import time
-    time.sleep(0.5)
     actual_port = server.port
-
     print(f'Voxa HTTP Server 运行中: http://localhost:{actual_port}')
-    print(f'API 文档: http://localhost:{actual_port}/api/health')
+    print(f'接口:')
+    print(f'  POST /api/transcribe         - 单次转写（上传音频文件）')
+    print(f'  POST /api/transcribe/stream - 流式转写（SSE 事件流）')
+    print(f'  GET  /api/health            - 健康检查')
     print('按 Ctrl+C 停止')
 
     try:
