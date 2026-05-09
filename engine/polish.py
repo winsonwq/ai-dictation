@@ -6,9 +6,12 @@ LLM 文本润色/纠错模块
 
 import os
 import asyncio
+import logging
 import time
 from typing import Optional
 import threading
+
+_logger = logging.getLogger('dictation.polish')
 
 # 默认 prompt
 SYSTEM_PROMPT = """你是一个专业的语音转写后处理器。你的任务：
@@ -22,7 +25,7 @@ SYSTEM_PROMPT = """你是一个专业的语音转写后处理器。你的任务�
 输入：语音转写的原始文本（可能没有标点）
 输出：处理后的文本（直接输出，不要解释，不要加引号）"""
 
-DEFAULT_MODEL = 'qwen/qwen2.5-72b-instruct'
+DEFAULT_MODEL = 'qwen/qwen3.5-plus-02-15'
 DEFAULT_BASE_URL = 'https://openrouter.ai/api/v1'
 
 
@@ -50,7 +53,7 @@ class PolishEngine:
         """
         Args:
             api_key: OpenRouter API key，默认从环境变量 OPENROUTER_API_KEY 读取
-            model: 模型 ID，默认 qwen2.5-72b-instruct
+            model: 模型 ID，默认 qwen/qwen3.5-plus-02-15
             base_url: API 地址
             timeout: 请求超时（秒）
             temperature: 采样温度，越低越确定性
@@ -114,7 +117,7 @@ class PolishEngine:
             return result
 
         except Exception as e:
-            print(f'[Polish] 润色失败: {e}')
+            _logger.error(f'润色失败: {e}')
             return text  # 失败时返回原文
 
     async def polish_async(self, text: str) -> str:
@@ -149,7 +152,7 @@ class PolishEngine:
             result = response.choices[0].message.content.strip()
             return result
         except Exception as e:
-            print(f'[Polish] 异步润色失败: {e}')
+            _logger.error(f'异步润色失败: {e}')
             return text
 
     def polish_stream(self, text: str):
@@ -182,7 +185,7 @@ class PolishEngine:
                     yield delta
 
         except Exception as e:
-            print(f'[Polish] 流式润色失败: {e}')
+            _logger.error(f'流式润色失败: {e}')
             yield text
 
 

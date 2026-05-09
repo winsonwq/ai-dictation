@@ -5,16 +5,19 @@ WSL2 环境下自动回退到文件输入模式（用于测试）
 """
 
 import sys
+import logging
 import threading
 import queue
 from dataclasses import dataclass
 from typing import Optional, Callable, Iterator
 import numpy as np
 
+_logger = logging.getLogger('dictation.audio')
+
 # 音频参数
 SAMPLE_RATE = 16000
 CHANNELS = 1
-CHUNK_SIZE = 512  # 每次读取的样本数（约32ms）
+CHUNK_SIZE = 512  # 每次读取的样本数（32ms @ 16kHz，与 Silero VAD 要求一致）
 
 
 class AudioError(Exception):
@@ -35,18 +38,26 @@ def list_devices() -> list[AudioDevice]:
     try:
         import sounddevice as sd
         devices = sd.query_devices()
-        if not isinstance(devices, list):
-            devices = [devices]
-        return [
-            AudioDevice(
-                index=i,
-                name=d.get('name', f'Device {i}'),
-                channels=d.get('max_input_channels', 0),
-                sample_rate=int(d.get('default_samplerate', 16000)),
-            )
-            for i, d in enumerate(devices)
-            if d.get('max_input_channels', 0) > 0
-        ]
+        # query_devices() 返回 DeviceList，支持索引和属性访问
+        result = []
+        for i, d in enumerate(devices):
+            # 支持属性和字典两种访问方式
+            max_channels = getattr(d, 'max_input_channels', 0)
+            if isinstance(d, dict):
+                max_channels = d.get('max_input_channels', 0)
+            if max_channels > 0:
+                name = getattr(d, 'name', f'Device {i}')
+                sample_rate = int(getattr(d, 'default_samplerate', 16000))
+                if isinstance(d, dict):
+                    name = d.get('name', f'Device {i}')
+                    sample_rate = int(d.get('default_samplerate', 16000))
+                result.append(AudioDevice(
+                    index=i,
+                    name=name,
+                    channels=max_channels,
+                    sample_rate=sample_rate,
+                ))
+        return result
     except OSError as e:
         if 'PortAudio' in str(e) or 'No Default Input Device' in str(e):
             return []
@@ -70,17 +81,42 @@ class MicrophoneCapture:
         self._running = False
         self._thread: Optional[threading.Thread] = None
         self._device_index = device_index
+        self._device_sr = SAMPLE_RATE  # 设备原始采样率
 
     def _audio_callback(self, indata, frames, time, status):
         """sounddevice 音频回调，每次 frames 个样本"""
         if status:
-            print(f'[Audio Warning] {status}', file=sys.stderr)
-        # 复制数据避免引用问题
+            _logger.warning(f'音频回调警告: {status}')
         chunk = indata[:, 0].copy()  # 单声道 float32
+
+        # 诊断：记录原始音频强度
+        rms_original = np.sqrt(np.mean(chunk ** 2)).item()
+        max_original = np.max(np.abs(chunk)).item()
+
+        # 重采样到 16kHz
+        if self._device_sr != SAMPLE_RATE:
+            chunk = self._resample(chunk, self._device_sr, SAMPLE_RATE)
+
+        rms_after = np.sqrt(np.mean(chunk ** 2)).item() if len(chunk) > 0 else 0
+        max_after = np.max(np.abs(chunk)).item() if len(chunk) > 0 else 0
+
+        # 只在音量变化时记录（避免日志太多）
+        if not hasattr(self, '_last_rms') or abs(rms_after - self._last_rms) > 0.001:
+            _logger.debug(f'音频: 原始rms={rms_original:.4f} resample后rms={rms_after:.4f} len={len(chunk)}')
+            self._last_rms = rms_after
+
         try:
             self._queue.put_nowait(chunk)
         except queue.Full:
             pass  # 丢帧防止阻塞
+
+    def _resample(self, data: np.ndarray, from_sr: int, to_sr: int) -> np.ndarray:
+        """线性插值重采样"""
+        if from_sr == to_sr:
+            return data
+        n = int(len(data) * to_sr / from_sr)
+        indices = np.linspace(0, len(data) - 1, n)
+        return np.interp(indices, np.arange(len(data)), data).astype(np.float32)
 
     def start(self):
         """启动采集"""
@@ -109,15 +145,21 @@ class MicrophoneCapture:
 
         # 确保 16kHz 采样
         target_sr = int(device_info.get('default_samplerate', 16000))
+        self._device_sr = target_sr  # 保存设备采样率
+
+        # 计算 blocksize：确保重采样后约 512 样本（Silero VAD 要求）
         if target_sr != SAMPLE_RATE:
-            # sounddevice 不做重采样，依赖外部 resample
-            print(f'[Audio] 设备采样率 {target_sr}Hz，将内部重采样到 {SAMPLE_RATE}Hz')
+            computed_blocksize = int(512 * target_sr / SAMPLE_RATE)
+            computed_blocksize = ((computed_blocksize + 15) // 16) * 16
+            blocksize = max(computed_blocksize, 512)
+        else:
+            blocksize = CHUNK_SIZE
 
         self._stream = sd.InputStream(
             device=self._device_index,
             channels=CHANNELS,
             samplerate=target_sr,
-            blocksize=CHUNK_SIZE,
+            blocksize=blocksize,
             dtype='float32',
             callback=self._audio_callback,
         )
@@ -139,19 +181,27 @@ class MicrophoneCapture:
     def read(self, timeout: Optional[float] = None) -> Optional[np.ndarray]:
         """
         读取一段音频数据
-        返回: np.ndarray (float32, shape=(n_samples,)) 或 None（超时）
+        返回: np.ndarray (float32, shape=(n_samples,)) 或 None（超时或停止）
         """
+        if not self._running:
+            _logger.debug('read() 返回 None: _running=False')
+            return None
         try:
-            return self._queue.get(timeout=timeout)
+            chunk = self._queue.get(timeout=timeout)
+            _logger.debug(f'read() 获取 chunk: len={len(chunk)}, qsize={self._queue.qsize()}')
+            return chunk
         except queue.Empty:
+            _logger.debug('read() 超时: queue.Empty')
             return None
 
     def read_all(self) -> Iterator[np.ndarray]:
         """持续读取直到 stop()"""
+        _logger.debug('read_all() 开始')
         while self._running:
             chunk = self.read(timeout=1.0)
             if chunk is not None:
                 yield chunk
+        _logger.debug('read_all() 结束')
 
     def stop(self):
         """停止采集"""

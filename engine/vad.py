@@ -5,15 +5,18 @@ Voice Activity Detection - Silero VAD 封装
 """
 
 import torch
+import logging
 import numpy as np
 from dataclasses import dataclass
 from typing import Tuple
 from pathlib import Path
 
+_logger = logging.getLogger('dictation.vad')
+
 # VAD 参数
 VAD_SAMPLE_RATE = 16000
-# Silero 需要 30s 的 context 窗口，但我们做流式所以用 30ms per chunk
-VAD_CHUNK_SIZE = 480  # 30ms @ 16kHz
+# Silero VAD 新版本要求恰好 512 样本（16kHz）或 256 样本（8kHz）
+VAD_CHUNK_SIZE = 512  # 32ms @ 16kHz (必须是 512)
 
 
 @dataclass
@@ -36,7 +39,7 @@ class VADEngine:
 
     def __init__(
         self,
-        threshold: float = 0.5,
+        threshold: float = 0.3,  # 降低阈值：0.5 太严格，0.3 更适合中文语音
         min_speech_duration_ms: int = 250,
         min_silence_duration_ms: int = 500,
         window_size_samples: int = VAD_CHUNK_SIZE,
@@ -114,46 +117,27 @@ class VADEngine:
                 result = self._process_chunk(sub_chunk)
             return result
 
-        # 转换为 tensor
-        tensor = torch.from_numpy(chunk).float()
-
-        # 流式推理
-        with torch.no_grad():
-            # 如果 hiddens 不为 None，需要传入
-            if self._hiddens is not None:
-                speech_prob, self._hiddens = self._model(tensor, self._hiddens)
-            else:
-                speech_prob, self._hiddens = self._model(tensor)
-
-        prob = speech_prob.item()
-
-        # 累积静音帧数
-        if prob < self.threshold:
-            self._silence_frames += 1
-        else:
-            self._silence_frames = 0
-
-        is_speech = prob >= self.threshold
-
-        return VADResult(is_speech=is_speech, probability=prob)
+        return self._process_chunk(chunk)
 
     def _process_chunk(self, chunk: np.ndarray) -> VADResult:
         """内部：处理单个 window"""
         tensor = torch.from_numpy(chunk).float()
 
         with torch.no_grad():
-            if self._hiddens is not None:
-                speech_prob, self._hiddens = self._model(tensor, self._hiddens)
-            else:
-                speech_prob, self._hiddens = self._model(tensor)
+            # 新版本 Silero VAD 只返回概率 tensor，不需要 hiddens
+            speech_prob = self._model(tensor, VAD_SAMPLE_RATE)
 
         prob = speech_prob.item()
+        # 计算音频幅度用于诊断
+        audio_rms = np.sqrt(np.mean(chunk ** 2)).item()
+        audio_max = np.max(np.abs(chunk)).item()
 
         if prob < self.threshold:
             self._silence_frames += 1
         else:
             self._silence_frames = 0
 
+        _logger.debug(f'VAD: prob={prob:.3f}, rms={audio_rms:.4f}, max={audio_max:.4f}')
         return VADResult(is_speech=prob >= self.threshold, probability=prob)
 
     def reset(self):

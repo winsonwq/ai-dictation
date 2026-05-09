@@ -4,7 +4,13 @@
 
 ## 快速开始
 
-### 1. 安装依赖
+### 0. 安装 whisper.cpp
+
+```bash
+brew install whisper-cpp
+```
+
+### 1. 安装 Python 依赖
 
 ```bash
 pip install -r requirements.txt
@@ -35,9 +41,10 @@ python main.py
 
 | 参数 | 说明 |
 |------|------|
-| `--model` | Whisper 模型大小: tiny/base/small/medium/large |
+| `--engine` | ASR 引擎: `whisper` (whisper.cpp) 或 `sensevoice` (SenseVoice, 带标点) |
+| `--model` | Whisper 模型大小（仅 whisper 引擎） |
 | `--llm-model` | LLM 模型，默认 `qwen/qwen3.5-plus-02-15` |
-| `--no-polish` | 禁用 LLM 润色，只看原始转写 |
+| `--polish` | 启用 LLM 润色（默认关闭） |
 | `--input-file <file>` | 从文件读取音频（用于测试，WAV 16kHz mono） |
 | `--check` | 仅检查环境 |
 | `--debug` | 调试模式 |
@@ -71,7 +78,9 @@ ai-dictation/
 ├── engine/
 │   ├── audio.py         # 音频采集
 │   ├── vad.py           # Silero VAD
-│   ├── asr.py           # faster-whisper ASR
+│   ├── asr.py           # ASR 入口（后端可切换）
+│   ├── _asr_whisper.py   # whisper.cpp 后端
+│   ├── _asr_sensevoice.py # SenseVoice 后端
 │   ├── polish.py        # LLM 润色
 │   └── rpc.py           # JSON-RPC 协议
 ├── logs/                # 转写历史
