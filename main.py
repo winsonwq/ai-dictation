@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-dictation main.py
+voxa main.py
 命令行 AI 听写工具
 """
 
@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # 日志配置：写入文件，UI 只显示关键信息
 def setup_logging():
-    log_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dictation.log')
+    log_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'voxa.log')
     # 每次运行从空日志开始
     logging.basicConfig(
         level=logging.DEBUG,
@@ -110,7 +110,7 @@ class RichUI:
         }.get(self._state, 'white')
 
         # 打印状态
-        self.console.print(f"[bold]AI Dictation[/bold] [dim]({self._engine}/{self._model})[/dim]")
+        self.console.print(f"[bold]Voxa[/bold] [dim]({self._engine}/{self._model})[/dim]")
         self.console.print(f"[{state_color}]{STATE_PROMPTS[self._state]}[/{state_color}]")
 
         # 打印转写内容
@@ -195,7 +195,7 @@ class PlainUI:
     def _print_ui(self):
         """打印 UI"""
         os.system('clear')
-        print(f'=== AI Dictation ({self._engine}/{self._model}) ===')
+        print(f'=== Voxa ({self._engine}/{self._model}) ===')
         print(f'状态: {STATE_PROMPTS[self._state]}')
 
         if self._polished:
@@ -578,7 +578,7 @@ class KeyboardHandler:
 # ===================== Main =====================
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='AI Dictation CLI')
+    parser = argparse.ArgumentParser(description='Voxa CLI')
     parser.add_argument('--engine', default='whisper',
                         choices=['whisper', 'sensevoice'],
                         help='ASR 引擎: whisper (whisper.cpp) | sensevoice (带标点)')
@@ -609,7 +609,7 @@ def parse_args():
 
 def cmd_check():
     """环境检测"""
-    print('=== AI Dictation 环境检测 ===\n')
+    print('=== Voxa 环境检测 ===\n')
 
     # 音频环境
     print('音频环境:')

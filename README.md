@@ -1,4 +1,4 @@
-# AI Dictation
+# Voxa
 
 命令行 AI 听写工具，支持多引擎本地语音转文字。
 
@@ -87,7 +87,7 @@ python main.py --stream --flush-interval 1.0  # 更快的刷新间隔
 ## 项目结构
 
 ```
-ai-dictation/
+voxa/
 ├── main.py                # CLI 入口
 ├── whisper-worker.c       # 微型 C 常驻进程
 ├── engine/

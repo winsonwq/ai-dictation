@@ -1,5 +1,5 @@
 """
-engine/_asr_sensevoice.py
+voxa/engine/_asr_sensevoice.py
 SenseVoice backend — 阿里 FunASR SenseVoice，原生中文标点
 模型: iic/SenseVoiceSmall (~160MB)，通过 funasr 调用
 """

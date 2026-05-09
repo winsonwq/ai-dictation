@@ -1,5 +1,5 @@
 """
-engine/audio.py
+voxa/engine/audio.py
 音频采集模块 - 跨平台麦克风采集
 WSL2 环境下自动回退到文件输入模式（用于测试）
 """

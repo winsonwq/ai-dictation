@@ -1,5 +1,5 @@
 """
-engine/vad.py
+voxa/engine/vad.py
 Voice Activity Detection - Silero VAD 封装
 流式接口，返回 (is_speech: bool, speech_prob: float)
 """

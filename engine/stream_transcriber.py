@@ -1,5 +1,5 @@
 """
-engine/stream_transcriber.py
+voxa/engine/stream_transcriber.py
 流式转写组件 - 定时批量转写实现
 """
 

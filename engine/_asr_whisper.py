@@ -1,5 +1,5 @@
 """
-engine/_asr_whisper.py
+voxa/engine/_asr_whisper.py
 Whisper.cpp backend — whisper-worker 常驻进程 (Metal GPU, 模型常驻)
 """
 

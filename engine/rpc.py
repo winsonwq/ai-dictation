@@ -1,5 +1,5 @@
 """
-engine/rpc.py
+voxa/engine/rpc.py
 stdin/stdout JSON-RPC 协议
 用于 Tauri 进程间通信
 

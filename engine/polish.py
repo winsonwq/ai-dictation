@@ -1,5 +1,5 @@
 """
-engine/polish.py
+voxa/engine/polish.py
 LLM 文本润色/纠错模块
 通过 OpenRouter API 调用 LLM
 """
@@ -83,8 +83,8 @@ class PolishEngine:
                         base_url=self.base_url,
                         timeout=self.timeout,
                         default_headers={
-                            'HTTP-Referer': 'https://ai-dictation.local',
-                            'X-Title': 'ai-dictation',
+                            'HTTP-Referer': 'https://voxa.local',
+                            'X-Title': 'voxa',
                         },
                     )
         return self._client

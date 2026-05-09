@@ -1,4 +1,4 @@
-# SPEC: ai-dictation
+# SPEC: voxa
 
 ## Objective
 
@@ -70,7 +70,7 @@ python main.py --llm-model qwen/qwen3.5-plus-02-15  # 指定 LLM 模型
 ## Project Structure
 
 ```
-ai-dictation/
+voxa/
 ├── main.py                     # CLI 入口，状态机，Rich UI
 ├── engine/
 │   ├── audio.py               # 音频采集（sounddevice）
