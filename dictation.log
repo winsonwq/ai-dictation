@@ -1,855 +1,517 @@
-09:46:58 [dictation] 启动中 (引擎: sensevoice, 模型: small)
-09:46:58 [dictation] 预加载引擎中...
-09:46:59 [torio._extension.utils] Loading FFmpeg6
-09:46:59 [torio._extension.utils] Failed to load FFmpeg6 extension.
-Traceback (most recent call last):
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 116, in _find_ffmpeg_extension
-    ext = _find_versionsed_ffmpeg_extension(ffmpeg_ver)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 108, in _find_versionsed_ffmpeg_extension
-    _load_lib(lib)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 94, in _load_lib
-    torch.ops.load_library(path)
-  File "/opt/homebrew/lib/python3.9/site-packages/torch/_ops.py", line 1478, in load_library
-    ctypes.CDLL(path)
-  File "/opt/homebrew/Cellar/python@3.9/3.9.23/Frameworks/Python.framework/Versions/3.9/lib/python3.9/ctypes/__init__.py", line 374, in __init__
-    self._handle = _dlopen(self._name, mode)
-OSError: dlopen(/opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg6.so, 0x0006): Library not loaded: @rpath/libavutil.58.dylib
-  Referenced from: <D0BF8BE2-7386-31C9-B6EE-5916A74CB5FE> /opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg6.so
-  Reason: tried: '/opt/homebrew/lib/libavutil.58.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.58.dylib' (no such file), '/opt/homebrew/lib/libavutil.58.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.58.dylib' (no such file)
-09:46:59 [torio._extension.utils] Loading FFmpeg5
-09:46:59 [torio._extension.utils] Failed to load FFmpeg5 extension.
-Traceback (most recent call last):
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 116, in _find_ffmpeg_extension
-    ext = _find_versionsed_ffmpeg_extension(ffmpeg_ver)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 108, in _find_versionsed_ffmpeg_extension
-    _load_lib(lib)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 94, in _load_lib
-    torch.ops.load_library(path)
-  File "/opt/homebrew/lib/python3.9/site-packages/torch/_ops.py", line 1478, in load_library
-    ctypes.CDLL(path)
-  File "/opt/homebrew/Cellar/python@3.9/3.9.23/Frameworks/Python.framework/Versions/3.9/lib/python3.9/ctypes/__init__.py", line 374, in __init__
-    self._handle = _dlopen(self._name, mode)
-OSError: dlopen(/opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg5.so, 0x0006): Library not loaded: @rpath/libavutil.57.dylib
-  Referenced from: <E89DCAAE-7EC0-3ED8-B59D-1022058313DB> /opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg5.so
-  Reason: tried: '/opt/homebrew/lib/libavutil.57.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.57.dylib' (no such file), '/opt/homebrew/lib/libavutil.57.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.57.dylib' (no such file)
-09:46:59 [torio._extension.utils] Loading FFmpeg4
-09:46:59 [torio._extension.utils] Failed to load FFmpeg4 extension.
-Traceback (most recent call last):
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 116, in _find_ffmpeg_extension
-    ext = _find_versionsed_ffmpeg_extension(ffmpeg_ver)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 108, in _find_versionsed_ffmpeg_extension
-    _load_lib(lib)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 94, in _load_lib
-    torch.ops.load_library(path)
-  File "/opt/homebrew/lib/python3.9/site-packages/torch/_ops.py", line 1478, in load_library
-    ctypes.CDLL(path)
-  File "/opt/homebrew/Cellar/python@3.9/3.9.23/Frameworks/Python.framework/Versions/3.9/lib/python3.9/ctypes/__init__.py", line 374, in __init__
-    self._handle = _dlopen(self._name, mode)
-OSError: dlopen(/opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg4.so, 0x0006): Library not loaded: @rpath/libavutil.56.dylib
-  Referenced from: <F144F519-5261-3419-86B8-D8167D854D9A> /opt/homebrew/lib/python3.9/site-packages/torio/lib/libtorio_ffmpeg4.so
-  Reason: tried: '/opt/homebrew/lib/libavutil.56.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.56.dylib' (no such file), '/opt/homebrew/lib/libavutil.56.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libavutil.56.dylib' (no such file)
-09:46:59 [torio._extension.utils] Loading FFmpeg
-09:46:59 [torio._extension.utils] Failed to load FFmpeg extension.
-Traceback (most recent call last):
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 116, in _find_ffmpeg_extension
-    ext = _find_versionsed_ffmpeg_extension(ffmpeg_ver)
-  File "/opt/homebrew/lib/python3.9/site-packages/torio/_extension/utils.py", line 106, in _find_versionsed_ffmpeg_extension
-    raise RuntimeError(f"FFmpeg{version} extension is not available.")
-RuntimeError: FFmpeg extension is not available.
-09:46:59 [dictation] VAD 引擎加载完成
-09:46:59 [dictation.asr.sensevoice] 加载 SenseVoice 模型...
-09:47:01 [root] New registry table added: preprocessor_classes
-09:47:01 [root] New registry table added: prompt_classes
-09:47:01 [root] Key Conformer already exists in model_classes, re-register
-09:47:01 [root] Key ParaformerSANMDecoder already exists in decoder_classes, re-register
-09:47:01 [root] Key ParaformerSANMDecoderExport already exists in decoder_classes, re-register
-09:47:01 [root] Key ParaformerSANMDecoderOnlineExport already exists in decoder_classes, re-register
-09:47:01 [root] Key ParaformerSANDecoder already exists in decoder_classes, re-register
-09:47:01 [root] Key ParaformerDecoderSANExport already exists in decoder_classes, re-register
-09:47:02 [root] New registry table added: adaptor_classes
-09:47:02 [root] Key Linear already exists in adaptor_classes, re-register
-09:47:03 [root] Key TransformerDecoder already exists in decoder_classes, re-register
-09:47:03 [root] Key LightweightConvolutionTransformerDecoder already exists in decoder_classes, re-register
-09:47:03 [root] Key LightweightConvolution2DTransformerDecoder already exists in decoder_classes, re-register
-09:47:03 [root] Key DynamicConvolutionTransformerDecoder already exists in decoder_classes, re-register
-09:47:03 [root] Key DynamicConvolution2DTransformerDecoder already exists in decoder_classes, re-register
-09:47:03 [root] New registry table added: lid_predictor_classes
-09:47:03 [root] download models from model hub: ms
-09:47:03 [filelock] Attempting to acquire lock 4819228656 on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
-09:47:03 [filelock] Lock 4819228656 acquired on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
-09:47:03 [urllib3.connectionpool] Starting new HTTPS connection (1): www.modelscope.cn:443
-09:47:03 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/repos/internalAccelerationInfo HTTP/1.1" 200 188
-09:47:03 [urllib3.connectionpool] Starting new HTTP connection (1): 127.0.0.1:10808
-09:47:03 [urllib3.connectionpool] Starting new HTTPS connection (1): www.modelscope.cn:443
-09:47:04 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall HTTP/1.1" 200 None
-09:47:04 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall/revisions HTTP/1.1" 200 318
-09:47:04 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall/repo/files?Revision=master&Recursive=True HTTP/1.1" 200 None
-09:47:04 [filelock] Attempting to release lock 4819228656 on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
-09:47:04 [filelock] Lock 4819228656 released on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
-09:47:04 [root] trust_remote_code: False
-09:47:05 [root] Loading pretrained params from /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt
-09:47:05 [root] ckpt: /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt
-09:47:06 [root] scope_map: ['module.', 'None']
-09:47:06 [root] excludes: None
-09:47:06 [root] Loading ckpt: /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt, status: <All keys matched successfully>
-09:47:06 [dictation.asr.sensevoice] SenseVoice warm-up...
-09:47:07 [dictation.asr.sensevoice] SenseVoice 就绪
-09:47:07 [dictation] ASR 引擎加载完成
-09:47:07 [dictation] 引擎就绪，按空格开始
-09:47:07 [dictation] 键盘监听开始
-09:47:08 [dictation] 键盘读到: ' ' ord=32
-09:47:08 [dictation] 检测到空格键
-09:47:08 [dictation] on_space() 被调用
-09:47:08 [dictation] on_space() 事件已入队，队列大小=1
-09:47:08 [dictation] 空格键: engine._state=State.IDLE
-09:47:08 [dictation] _run_loop() 开始
-09:47:08 [dictation] _run_loop: 使用 MicrophoneCapture
-09:47:08 [dictation] _run_loop: 开始迭代 chunks
-09:47:08 [dictation.audio] read_all() 开始
-09:47:08 [dictation] 状态变化: State.LISTENING
-09:47:08 [dictation.audio] 音频: 原始rms=0.0064 resample后rms=0.0064 len=512
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation] _run_loop: 处理 chunk #1, len=512
-09:47:08 [dictation.audio] 音频: 原始rms=0.0002 resample后rms=0.0002 len=512
-09:47:08 [dictation.vad] VAD: prob=0.145, rms=0.0064, max=0.0359
-09:47:08 [dictation] VAD: is_speech=False, prob=0.145, rms=0.0064
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation] _run_loop: 处理 chunk #2, len=512
-09:47:08 [dictation.vad] VAD: prob=0.042, rms=0.0002, max=0.0008
-09:47:08 [dictation] VAD: is_speech=False, prob=0.042, rms=0.0002
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation] _run_loop: 处理 chunk #3, len=512
-09:47:08 [dictation.vad] VAD: prob=0.016, rms=0.0002, max=0.0005
-09:47:08 [dictation] VAD: is_speech=False, prob=0.016, rms=0.0002
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation.vad] VAD: prob=0.006, rms=0.0008, max=0.0025
-09:47:08 [dictation.audio] 音频: 原始rms=0.0015 resample后rms=0.0015 len=512
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation.vad] VAD: prob=0.005, rms=0.0015, max=0.0046
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation.vad] VAD: prob=0.005, rms=0.0018, max=0.0044
-09:47:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:08 [dictation.vad] VAD: prob=0.005, rms=0.0018, max=0.0043
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.009, rms=0.0019, max=0.0047
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.011, rms=0.0020, max=0.0046
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation] _run_loop: 处理 chunk #10, len=512
-09:47:09 [dictation.vad] VAD: prob=0.011, rms=0.0021, max=0.0051
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.010, rms=0.0019, max=0.0058
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.011, rms=0.0018, max=0.0042
-09:47:09 [dictation.audio] 音频: 原始rms=0.0026 resample后rms=0.0026 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.011, rms=0.0026, max=0.0063
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.008, rms=0.0017, max=0.0053
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.008, rms=0.0016, max=0.0041
-09:47:09 [dictation.audio] 音频: 原始rms=0.0011 resample后rms=0.0011 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.007, rms=0.0011, max=0.0030
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.008, rms=0.0020, max=0.0045
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.006, rms=0.0020, max=0.0043
-09:47:09 [dictation.audio] 音频: 原始rms=0.0024 resample后rms=0.0024 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.013, rms=0.0024, max=0.0064
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation] _run_loop: 处理 chunk #20, len=512
-09:47:09 [dictation.vad] VAD: prob=0.010, rms=0.0015, max=0.0033
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.009, rms=0.0020, max=0.0049
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.006, rms=0.0015, max=0.0034
-09:47:09 [dictation.audio] 音频: 原始rms=0.0014 resample后rms=0.0014 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.006, rms=0.0014, max=0.0037
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.005, rms=0.0022, max=0.0053
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.005, rms=0.0016, max=0.0040
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.005, rms=0.0022, max=0.0057
-09:47:09 [dictation.audio] 音频: 原始rms=0.0025 resample后rms=0.0025 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.004, rms=0.0025, max=0.0071
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.005, rms=0.0019, max=0.0049
-09:47:09 [dictation.audio] 音频: 原始rms=0.0151 resample后rms=0.0151 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.472, rms=0.0151, max=0.0529
-09:47:09 [dictation.audio] 音频: 原始rms=0.0538 resample后rms=0.0539 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation] _run_loop: 处理 chunk #30, len=512
-09:47:09 [dictation.vad] VAD: prob=0.944, rms=0.0539, max=0.1526
-09:47:09 [dictation] 语音段开始 (prob=0.944)
-09:47:09 [dictation.audio] 音频: 原始rms=0.0942 resample后rms=0.0942 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.990, rms=0.0942, max=0.2273
-09:47:09 [dictation.audio] 音频: 原始rms=0.1124 resample后rms=0.1123 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.994, rms=0.1123, max=0.2576
-09:47:09 [dictation.audio] 音频: 原始rms=0.1100 resample后rms=0.1100 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.991, rms=0.1100, max=0.2331
-09:47:09 [dictation.audio] 音频: 原始rms=0.1316 resample后rms=0.1316 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.989, rms=0.1316, max=0.2655
-09:47:09 [dictation.audio] 音频: 原始rms=0.1118 resample后rms=0.1118 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.994, rms=0.1118, max=0.2258
-09:47:09 [dictation.audio] 音频: 原始rms=0.1034 resample后rms=0.1033 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.993, rms=0.1033, max=0.2041
-09:47:09 [dictation.audio] 音频: 原始rms=0.1090 resample后rms=0.1090 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.990, rms=0.1090, max=0.1951
-09:47:09 [dictation.audio] 音频: 原始rms=0.1046 resample后rms=0.1046 len=512
-09:47:09 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:09 [dictation.vad] VAD: prob=0.979, rms=0.1046, max=0.1859
-09:47:10 [dictation.audio] 音频: 原始rms=0.0963 resample后rms=0.0963 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.966, rms=0.0963, max=0.1728
-09:47:10 [dictation.audio] 音频: 原始rms=0.0893 resample后rms=0.0893 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation] _run_loop: 处理 chunk #40, len=512
-09:47:10 [dictation.vad] VAD: prob=0.961, rms=0.0893, max=0.1654
-09:47:10 [dictation.audio] 音频: 原始rms=0.0867 resample后rms=0.0867 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.951, rms=0.0867, max=0.1805
-09:47:10 [dictation.audio] 音频: 原始rms=0.0719 resample后rms=0.0719 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.938, rms=0.0719, max=0.1608
-09:47:10 [dictation.audio] 音频: 原始rms=0.0797 resample后rms=0.0796 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.929, rms=0.0796, max=0.1833
-09:47:10 [dictation.audio] 音频: 原始rms=0.0746 resample后rms=0.0745 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.959, rms=0.0745, max=0.1812
-09:47:10 [dictation.audio] 音频: 原始rms=0.0620 resample后rms=0.0620 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.958, rms=0.0620, max=0.1564
-09:47:10 [dictation.audio] 音频: 原始rms=0.0599 resample后rms=0.0599 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.957, rms=0.0599, max=0.1437
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.952, rms=0.0590, max=0.1399
-09:47:10 [dictation.audio] 音频: 原始rms=0.0532 resample后rms=0.0531 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.965, rms=0.0531, max=0.1174
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.959, rms=0.0529, max=0.1095
-09:47:10 [dictation.audio] 音频: 原始rms=0.0635 resample后rms=0.0635 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation] _run_loop: 处理 chunk #50, len=512
-09:47:10 [dictation.vad] VAD: prob=0.969, rms=0.0635, max=0.1201
-09:47:10 [dictation.audio] 音频: 原始rms=0.0573 resample后rms=0.0572 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.963, rms=0.0572, max=0.1099
-09:47:10 [dictation.audio] 音频: 原始rms=0.0518 resample后rms=0.0518 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.951, rms=0.0518, max=0.1048
-09:47:10 [dictation.audio] 音频: 原始rms=0.0294 resample后rms=0.0294 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.932, rms=0.0294, max=0.0701
-09:47:10 [dictation.audio] 音频: 原始rms=0.0206 resample后rms=0.0206 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.929, rms=0.0206, max=0.0474
-09:47:10 [dictation.audio] 音频: 原始rms=0.0191 resample后rms=0.0191 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.886, rms=0.0191, max=0.0453
-09:47:10 [dictation.audio] 音频: 原始rms=0.0124 resample后rms=0.0124 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.846, rms=0.0124, max=0.0365
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.758, rms=0.0125, max=0.0316
-09:47:10 [dictation.audio] 音频: 原始rms=0.0085 resample后rms=0.0085 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.715, rms=0.0085, max=0.0206
-09:47:10 [dictation.audio] 音频: 原始rms=0.0048 resample后rms=0.0048 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.669, rms=0.0048, max=0.0144
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation] _run_loop: 处理 chunk #60, len=512
-09:47:10 [dictation.vad] VAD: prob=0.534, rms=0.0041, max=0.0102
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.370, rms=0.0038, max=0.0097
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.273, rms=0.0041, max=0.0120
-09:47:10 [dictation.audio] 音频: 原始rms=0.0036 resample后rms=0.0036 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.182, rms=0.0036, max=0.0103
-09:47:10 [dictation.audio] 音频: 原始rms=0.0046 resample后rms=0.0046 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.123, rms=0.0046, max=0.0149
-09:47:10 [dictation.audio] 音频: 原始rms=0.0035 resample后rms=0.0035 len=512
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.084, rms=0.0035, max=0.0100
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.049, rms=0.0028, max=0.0071
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.033, rms=0.0032, max=0.0083
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.027, rms=0.0029, max=0.0073
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation.vad] VAD: prob=0.020, rms=0.0025, max=0.0063
-09:47:10 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:10 [dictation] _run_loop: 处理 chunk #70, len=512
-09:47:10 [dictation.vad] VAD: prob=0.018, rms=0.0034, max=0.0091
-09:47:11 [dictation.audio] 音频: 原始rms=0.0058 resample后rms=0.0058 len=512
-09:47:11 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:11 [dictation.vad] VAD: prob=0.100, rms=0.0058, max=0.0184
-09:47:11 [dictation] 键盘读到: ' ' ord=32
-09:47:11 [dictation] 检测到空格键
-09:47:11 [dictation] on_space() 被调用
-09:47:11 [dictation] on_space() 事件已入队，队列大小=1
-09:47:11 [dictation] 空格键: engine._state=State.LISTENING
-09:47:11 [dictation] stop() called, current state=State.LISTENING
-09:47:11 [dictation] stop() setting _running=False
-09:47:11 [dictation] stop() calling _audio.stop()
-09:47:11 [dictation] 状态变化: State.FLUSHING
-09:47:12 [dictation.audio] read() 超时: queue.Empty
-09:47:12 [dictation.audio] read_all() 结束
-09:47:12 [dictation] _run_loop: 循环结束, 共处理 71 个 chunk
-09:47:12 [dictation] _flush() called
-09:47:12 [dictation] 状态变化: State.FLUSHING
-09:47:12 [dictation.asr.sensevoice] sensevoice flush: buffer=21504
-09:47:12 [dictation.asr.sensevoice] sensevoice result: 喂,喂,喂....
-09:47:12 [dictation] 转写: partial=False, text=喂,喂,喂.... (0.7s)
-09:47:12 [dictation] 状态变化: State.IDLE
-09:47:14 [dictation] 键盘读到: ' ' ord=32
-09:47:14 [dictation] 检测到空格键
-09:47:14 [dictation] on_space() 被调用
-09:47:14 [dictation] on_space() 事件已入队，队列大小=1
-09:47:14 [dictation] 空格键: engine._state=State.IDLE
-09:47:14 [dictation] _run_loop() 开始
-09:47:14 [dictation] _run_loop: 使用 MicrophoneCapture
-09:47:14 [dictation] _run_loop: 开始迭代 chunks
-09:47:14 [dictation] 状态变化: State.LISTENING
-09:47:14 [dictation.audio] read_all() 开始
-09:47:14 [dictation.audio] 音频: 原始rms=0.0013 resample后rms=0.0013 len=512
-09:47:14 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:14 [dictation] _run_loop: 处理 chunk #1, len=512
-09:47:14 [dictation.vad] VAD: prob=0.015, rms=0.0013, max=0.0053
-09:47:14 [dictation] VAD: is_speech=False, prob=0.015, rms=0.0013
-09:47:15 [dictation.audio] 音频: 原始rms=0.0001 resample后rms=0.0001 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation] _run_loop: 处理 chunk #2, len=512
-09:47:15 [dictation.vad] VAD: prob=0.005, rms=0.0001, max=0.0003
-09:47:15 [dictation] VAD: is_speech=False, prob=0.005, rms=0.0001
-09:47:15 [dictation.audio] 音频: 原始rms=0.0018 resample后rms=0.0017 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation] _run_loop: 处理 chunk #3, len=512
-09:47:15 [dictation.vad] VAD: prob=0.110, rms=0.0017, max=0.0053
-09:47:15 [dictation] VAD: is_speech=False, prob=0.110, rms=0.0017
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.058, rms=0.0010, max=0.0032
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.025, rms=0.0009, max=0.0025
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.012, rms=0.0015, max=0.0036
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.008, rms=0.0022, max=0.0054
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.008, rms=0.0013, max=0.0033
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.017, rms=0.0018, max=0.0064
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation] _run_loop: 处理 chunk #10, len=512
-09:47:15 [dictation.vad] VAD: prob=0.010, rms=0.0018, max=0.0039
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.006, rms=0.0027, max=0.0066
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.006, rms=0.0022, max=0.0052
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.004, rms=0.0014, max=0.0046
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.003, rms=0.0017, max=0.0038
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.002, rms=0.0013, max=0.0036
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.001, rms=0.0018, max=0.0047
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.001, rms=0.0012, max=0.0029
-09:47:15 [dictation.audio] 音频: 原始rms=0.0030 resample后rms=0.0030 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.016, rms=0.0030, max=0.0220
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.044, rms=0.0032, max=0.0145
-09:47:15 [dictation.audio] 音频: 原始rms=0.0155 resample后rms=0.0155 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation] _run_loop: 处理 chunk #20, len=512
-09:47:15 [dictation.vad] VAD: prob=0.774, rms=0.0155, max=0.0684
-09:47:15 [dictation] 语音段开始 (prob=0.774)
-09:47:15 [dictation.audio] 音频: 原始rms=0.0228 resample后rms=0.0228 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.982, rms=0.0228, max=0.0683
-09:47:15 [dictation.audio] 音频: 原始rms=0.0208 resample后rms=0.0208 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.979, rms=0.0208, max=0.0632
-09:47:15 [dictation.audio] 音频: 原始rms=0.0188 resample后rms=0.0188 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.977, rms=0.0188, max=0.0587
-09:47:15 [dictation.audio] 音频: 原始rms=0.0156 resample后rms=0.0156 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.982, rms=0.0156, max=0.0383
-09:47:15 [dictation.audio] 音频: 原始rms=0.0067 resample后rms=0.0067 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.997, rms=0.0067, max=0.0176
-09:47:15 [dictation.audio] 音频: 原始rms=0.0104 resample后rms=0.0104 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.998, rms=0.0104, max=0.0344
-09:47:15 [dictation.audio] 音频: 原始rms=0.0336 resample后rms=0.0336 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=1.000, rms=0.0336, max=0.0626
-09:47:15 [dictation.audio] 音频: 原始rms=0.0485 resample后rms=0.0486 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.999, rms=0.0486, max=0.0977
-09:47:15 [dictation.audio] 音频: 原始rms=0.0446 resample后rms=0.0447 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.999, rms=0.0447, max=0.0891
-09:47:15 [dictation.audio] 音频: 原始rms=0.0246 resample后rms=0.0246 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation] _run_loop: 处理 chunk #30, len=512
-09:47:15 [dictation.vad] VAD: prob=0.999, rms=0.0246, max=0.0623
-09:47:15 [dictation.audio] 音频: 原始rms=0.0106 resample后rms=0.0106 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.998, rms=0.0106, max=0.0292
-09:47:15 [dictation.audio] 音频: 原始rms=0.0126 resample后rms=0.0125 len=512
-09:47:15 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:15 [dictation.vad] VAD: prob=0.998, rms=0.0125, max=0.0413
-09:47:16 [dictation.audio] 音频: 原始rms=0.0140 resample后rms=0.0140 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.996, rms=0.0140, max=0.0431
-09:47:16 [dictation.audio] 音频: 原始rms=0.0120 resample后rms=0.0120 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.985, rms=0.0120, max=0.0347
-09:47:16 [dictation.audio] 音频: 原始rms=0.0228 resample后rms=0.0228 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0228, max=0.0605
-09:47:16 [dictation.audio] 音频: 原始rms=0.0290 resample后rms=0.0290 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0290, max=0.0785
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0285, max=0.0812
-09:47:16 [dictation.audio] 音频: 原始rms=0.0337 resample后rms=0.0337 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0337, max=0.0965
-09:47:16 [dictation.audio] 音频: 原始rms=0.0355 resample后rms=0.0355 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0355, max=0.1142
-09:47:16 [dictation.audio] 音频: 原始rms=0.0382 resample后rms=0.0382 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation] _run_loop: 处理 chunk #40, len=512
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0382, max=0.1041
-09:47:16 [dictation.audio] 音频: 原始rms=0.0422 resample后rms=0.0421 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0421, max=0.0895
-09:47:16 [dictation.audio] 音频: 原始rms=0.0197 resample后rms=0.0196 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0196, max=0.0551
-09:47:16 [dictation.audio] 音频: 原始rms=0.0166 resample后rms=0.0165 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0165, max=0.0472
-09:47:16 [dictation.audio] 音频: 原始rms=0.0207 resample后rms=0.0204 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0204, max=0.0624
-09:47:16 [dictation.audio] 音频: 原始rms=0.0189 resample后rms=0.0185 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0185, max=0.0543
-09:47:16 [dictation.audio] 音频: 原始rms=0.0113 resample后rms=0.0111 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=0.999, rms=0.0111, max=0.0361
-09:47:16 [dictation.audio] 音频: 原始rms=0.0453 resample后rms=0.0453 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0453, max=0.1083
-09:47:16 [dictation.audio] 音频: 原始rms=0.0849 resample后rms=0.0848 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0848, max=0.1457
-09:47:16 [dictation.audio] 音频: 原始rms=0.1023 resample后rms=0.1023 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.1023, max=0.1895
-09:47:16 [dictation.audio] 音频: 原始rms=0.0879 resample后rms=0.0879 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation] _run_loop: 处理 chunk #50, len=512
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0879, max=0.1616
-09:47:16 [dictation.audio] 音频: 原始rms=0.0390 resample后rms=0.0390 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0390, max=0.0895
-09:47:16 [dictation.audio] 音频: 原始rms=0.0664 resample后rms=0.0664 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0664, max=0.1471
-09:47:16 [dictation.audio] 音频: 原始rms=0.0696 resample后rms=0.0695 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0695, max=0.1490
-09:47:16 [dictation.audio] 音频: 原始rms=0.0492 resample后rms=0.0492 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0492, max=0.1442
-09:47:16 [dictation.audio] 音频: 原始rms=0.0288 resample后rms=0.0288 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0288, max=0.0819
-09:47:16 [dictation.audio] 音频: 原始rms=0.0257 resample后rms=0.0257 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0257, max=0.0545
-09:47:16 [dictation.audio] 音频: 原始rms=0.0295 resample后rms=0.0295 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0295, max=0.0589
-09:47:16 [dictation.audio] 音频: 原始rms=0.0589 resample后rms=0.0590 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0590, max=0.1730
-09:47:16 [dictation.audio] 音频: 原始rms=0.0746 resample后rms=0.0746 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0746, max=0.2056
-09:47:16 [dictation.audio] 音频: 原始rms=0.0774 resample后rms=0.0774 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation] _run_loop: 处理 chunk #60, len=512
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0774, max=0.2072
-09:47:16 [dictation.audio] 音频: 原始rms=0.0743 resample后rms=0.0743 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0743, max=0.1976
-09:47:16 [dictation.audio] 音频: 原始rms=0.0625 resample后rms=0.0625 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0625, max=0.1541
-09:47:16 [dictation.audio] 音频: 原始rms=0.0515 resample后rms=0.0514 len=512
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0514, max=0.1081
-09:47:16 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:16 [dictation.vad] VAD: prob=1.000, rms=0.0522, max=0.1032
-09:47:17 [dictation.audio] 音频: 原始rms=0.0556 resample后rms=0.0556 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=1.000, rms=0.0556, max=0.1374
-09:47:17 [dictation.audio] 音频: 原始rms=0.0815 resample后rms=0.0815 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=1.000, rms=0.0815, max=0.1891
-09:47:17 [dictation.audio] 音频: 原始rms=0.0416 resample后rms=0.0416 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=1.000, rms=0.0416, max=0.0822
-09:47:17 [dictation.audio] 音频: 原始rms=0.0280 resample后rms=0.0280 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=1.000, rms=0.0280, max=0.0780
-09:47:17 [dictation.audio] 音频: 原始rms=0.0177 resample后rms=0.0177 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=1.000, rms=0.0177, max=0.0492
-09:47:17 [dictation.audio] 音频: 原始rms=0.0107 resample后rms=0.0107 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation] _run_loop: 处理 chunk #70, len=512
-09:47:17 [dictation.vad] VAD: prob=0.999, rms=0.0107, max=0.0346
-09:47:17 [dictation.audio] 音频: 原始rms=0.0066 resample后rms=0.0066 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.999, rms=0.0066, max=0.0196
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.989, rms=0.0061, max=0.0202
-09:47:17 [dictation.audio] 音频: 原始rms=0.0049 resample后rms=0.0049 len=512
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.886, rms=0.0049, max=0.0130
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.629, rms=0.0058, max=0.0187
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.338, rms=0.0040, max=0.0126
-09:47:17 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:17 [dictation.vad] VAD: prob=0.132, rms=0.0040, max=0.0128
-09:47:17 [dictation] 键盘读到: ' ' ord=32
-09:47:17 [dictation] 检测到空格键
-09:47:17 [dictation] on_space() 被调用
-09:47:17 [dictation] on_space() 事件已入队，队列大小=1
-09:47:17 [dictation] 空格键: engine._state=State.LISTENING
-09:47:17 [dictation] stop() called, current state=State.LISTENING
-09:47:17 [dictation] stop() setting _running=False
-09:47:17 [dictation] stop() calling _audio.stop()
-09:47:17 [dictation] 状态变化: State.FLUSHING
-09:47:18 [dictation.audio] read() 超时: queue.Empty
-09:47:18 [dictation.audio] read_all() 结束
-09:47:18 [dictation] _run_loop: 循环结束, 共处理 76 个 chunk
-09:47:18 [dictation] _flush() called
-09:47:18 [dictation.asr.sensevoice] sensevoice flush: buffer=29184
-09:47:18 [dictation] 状态变化: State.FLUSHING
-09:47:19 [dictation.asr.sensevoice] sensevoice result: 感觉还是有点慢呢。...
-09:47:19 [dictation] 转写: partial=False, text=感觉还是有点慢呢。... (0.8s)
-09:47:19 [dictation] 状态变化: State.IDLE
-09:47:20 [dictation] 键盘读到: ' ' ord=32
-09:47:20 [dictation] 检测到空格键
-09:47:20 [dictation] on_space() 被调用
-09:47:20 [dictation] on_space() 事件已入队，队列大小=1
-09:47:20 [dictation] 空格键: engine._state=State.IDLE
-09:47:20 [dictation] _run_loop() 开始
-09:47:20 [dictation] _run_loop: 使用 MicrophoneCapture
-09:47:20 [dictation] _run_loop: 开始迭代 chunks
-09:47:20 [dictation.audio] read_all() 开始
-09:47:20 [dictation] 状态变化: State.LISTENING
-09:47:20 [dictation.audio] 音频: 原始rms=0.0029 resample后rms=0.0029 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation] _run_loop: 处理 chunk #1, len=512
-09:47:20 [dictation.vad] VAD: prob=0.039, rms=0.0029, max=0.0111
-09:47:20 [dictation] VAD: is_speech=False, prob=0.039, rms=0.0029
-09:47:20 [dictation.audio] 音频: 原始rms=0.0002 resample后rms=0.0002 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation] _run_loop: 处理 chunk #2, len=512
-09:47:20 [dictation.vad] VAD: prob=0.011, rms=0.0002, max=0.0004
-09:47:20 [dictation] VAD: is_speech=False, prob=0.011, rms=0.0002
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation] _run_loop: 处理 chunk #3, len=512
-09:47:20 [dictation.vad] VAD: prob=0.010, rms=0.0002, max=0.0004
-09:47:20 [dictation] VAD: is_speech=False, prob=0.010, rms=0.0002
-09:47:20 [dictation.audio] 音频: 原始rms=0.0012 resample后rms=0.0012 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.023, rms=0.0012, max=0.0047
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.015, rms=0.0012, max=0.0028
-09:47:20 [dictation.audio] 音频: 原始rms=0.0770 resample后rms=0.0770 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.055, rms=0.0770, max=0.5282
-09:47:20 [dictation.audio] 音频: 原始rms=0.3926 resample后rms=0.3924 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.032, rms=0.3924, max=0.8096
-09:47:20 [dictation.audio] 音频: 原始rms=0.1002 resample后rms=0.1004 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.126, rms=0.1004, max=0.2474
-09:47:20 [dictation.audio] 音频: 原始rms=0.0135 resample后rms=0.0135 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.030, rms=0.0135, max=0.0323
-09:47:20 [dictation.audio] 音频: 原始rms=0.0039 resample后rms=0.0039 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation] _run_loop: 处理 chunk #10, len=512
-09:47:20 [dictation.vad] VAD: prob=0.010, rms=0.0039, max=0.0072
-09:47:20 [dictation.audio] 音频: 原始rms=0.0026 resample后rms=0.0026 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.022, rms=0.0026, max=0.0134
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.016, rms=0.0031, max=0.0121
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.011, rms=0.0025, max=0.0132
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.028, rms=0.0029, max=0.0088
-09:47:20 [dictation.audio] 音频: 原始rms=0.0278 resample后rms=0.0278 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.086, rms=0.0278, max=0.0824
-09:47:20 [dictation.audio] 音频: 原始rms=0.0095 resample后rms=0.0096 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.018, rms=0.0096, max=0.0396
-09:47:20 [dictation.audio] 音频: 原始rms=0.0033 resample后rms=0.0033 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.009, rms=0.0033, max=0.0085
-09:47:20 [dictation.audio] 音频: 原始rms=0.0023 resample后rms=0.0023 len=512
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.004, rms=0.0023, max=0.0063
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.003, rms=0.0032, max=0.0075
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation] _run_loop: 处理 chunk #20, len=512
-09:47:20 [dictation.vad] VAD: prob=0.002, rms=0.0018, max=0.0043
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.001, rms=0.0017, max=0.0043
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.001, rms=0.0023, max=0.0050
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.001, rms=0.0014, max=0.0032
-09:47:20 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:20 [dictation.vad] VAD: prob=0.001, rms=0.0025, max=0.0055
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0023, max=0.0047
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0015, max=0.0037
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0017, max=0.0038
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0030, max=0.0066
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0023, max=0.0054
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation] _run_loop: 处理 chunk #30, len=512
-09:47:21 [dictation.vad] VAD: prob=0.000, rms=0.0015, max=0.0032
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.000, rms=0.0022, max=0.0056
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0022, max=0.0052
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.001, rms=0.0025, max=0.0053
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.004, rms=0.0032, max=0.0105
-09:47:21 [dictation.audio] 音频: 原始rms=0.0042 resample后rms=0.0042 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.021, rms=0.0042, max=0.0144
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.028, rms=0.0049, max=0.0143
-09:47:21 [dictation.audio] 音频: 原始rms=0.0055 resample后rms=0.0055 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.027, rms=0.0055, max=0.0167
-09:47:21 [dictation.audio] 音频: 原始rms=0.0187 resample后rms=0.0187 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.631, rms=0.0187, max=0.0726
-09:47:21 [dictation] 语音段开始 (prob=0.631)
-09:47:21 [dictation.audio] 音频: 原始rms=0.0286 resample后rms=0.0286 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.953, rms=0.0286, max=0.0824
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation] _run_loop: 处理 chunk #40, len=512
-09:47:21 [dictation.vad] VAD: prob=0.979, rms=0.0292, max=0.0895
-09:47:21 [dictation.audio] 音频: 原始rms=0.0301 resample后rms=0.0301 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.984, rms=0.0301, max=0.0848
-09:47:21 [dictation.audio] 音频: 原始rms=0.0368 resample后rms=0.0367 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.990, rms=0.0367, max=0.0988
-09:47:21 [dictation.audio] 音频: 原始rms=0.0431 resample后rms=0.0431 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.989, rms=0.0431, max=0.0974
-09:47:21 [dictation.audio] 音频: 原始rms=0.0455 resample后rms=0.0456 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.988, rms=0.0456, max=0.0862
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.987, rms=0.0447, max=0.0912
-09:47:21 [dictation.audio] 音频: 原始rms=0.0473 resample后rms=0.0473 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.987, rms=0.0473, max=0.0952
-09:47:21 [dictation.audio] 音频: 原始rms=0.0485 resample后rms=0.0485 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.987, rms=0.0485, max=0.0949
-09:47:21 [dictation.audio] 音频: 原始rms=0.0214 resample后rms=0.0214 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.998, rms=0.0214, max=0.0659
-09:47:21 [dictation.audio] 音频: 原始rms=0.0162 resample后rms=0.0161 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.999, rms=0.0161, max=0.0539
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation] _run_loop: 处理 chunk #50, len=512
-09:47:21 [dictation.vad] VAD: prob=0.999, rms=0.0157, max=0.0564
-09:47:21 [dictation.audio] 音频: 原始rms=0.0184 resample后rms=0.0180 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.998, rms=0.0180, max=0.0606
-09:47:21 [dictation.audio] 音频: 原始rms=0.0165 resample后rms=0.0159 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.998, rms=0.0159, max=0.0543
-09:47:21 [dictation.audio] 音频: 原始rms=0.0123 resample后rms=0.0120 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.995, rms=0.0120, max=0.0387
-09:47:21 [dictation.audio] 音频: 原始rms=0.0074 resample后rms=0.0072 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=0.998, rms=0.0072, max=0.0206
-09:47:21 [dictation.audio] 音频: 原始rms=0.0555 resample后rms=0.0555 len=512
-09:47:21 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:21 [dictation.vad] VAD: prob=1.000, rms=0.0555, max=0.1315
-09:47:22 [dictation.audio] 音频: 原始rms=0.0786 resample后rms=0.0786 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0786, max=0.1592
-09:47:22 [dictation.audio] 音频: 原始rms=0.0899 resample后rms=0.0899 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0899, max=0.1705
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0906, max=0.1624
-09:47:22 [dictation.audio] 音频: 原始rms=0.0854 resample后rms=0.0854 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0854, max=0.1652
-09:47:22 [dictation.audio] 音频: 原始rms=0.0668 resample后rms=0.0668 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation] _run_loop: 处理 chunk #60, len=512
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0668, max=0.1560
-09:47:22 [dictation.audio] 音频: 原始rms=0.0505 resample后rms=0.0505 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0505, max=0.0926
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0515, max=0.0997
-09:47:22 [dictation.audio] 音频: 原始rms=0.0649 resample后rms=0.0649 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0649, max=0.1539
-09:47:22 [dictation.audio] 音频: 原始rms=0.0753 resample后rms=0.0753 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0753, max=0.1582
-09:47:22 [dictation.audio] 音频: 原始rms=0.0642 resample后rms=0.0641 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0641, max=0.1534
-09:47:22 [dictation.audio] 音频: 原始rms=0.0591 resample后rms=0.0590 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0590, max=0.1249
-09:47:22 [dictation.audio] 音频: 原始rms=0.0361 resample后rms=0.0361 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0361, max=0.1005
-09:47:22 [dictation.audio] 音频: 原始rms=0.0349 resample后rms=0.0349 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0349, max=0.1042
-09:47:22 [dictation.audio] 音频: 原始rms=0.0670 resample后rms=0.0670 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0670, max=0.1367
-09:47:22 [dictation.audio] 音频: 原始rms=0.0732 resample后rms=0.0732 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation] _run_loop: 处理 chunk #70, len=512
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0732, max=0.1648
-09:47:22 [dictation.audio] 音频: 原始rms=0.0508 resample后rms=0.0508 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0508, max=0.1454
-09:47:22 [dictation.audio] 音频: 原始rms=0.0272 resample后rms=0.0273 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0273, max=0.0823
-09:47:22 [dictation.audio] 音频: 原始rms=0.0294 resample后rms=0.0294 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0294, max=0.0729
-09:47:22 [dictation.audio] 音频: 原始rms=0.0359 resample后rms=0.0359 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0359, max=0.0833
-09:47:22 [dictation.audio] 音频: 原始rms=0.0395 resample后rms=0.0395 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0395, max=0.1223
-09:47:22 [dictation.audio] 音频: 原始rms=0.0510 resample后rms=0.0510 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0510, max=0.1379
-09:47:22 [dictation.audio] 音频: 原始rms=0.0477 resample后rms=0.0477 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0477, max=0.1436
-09:47:22 [dictation.audio] 音频: 原始rms=0.0381 resample后rms=0.0381 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0381, max=0.1104
-09:47:22 [dictation.audio] 音频: 原始rms=0.0299 resample后rms=0.0299 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0299, max=0.0552
-09:47:22 [dictation.audio] 音频: 原始rms=0.0252 resample后rms=0.0252 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation] _run_loop: 处理 chunk #80, len=512
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0252, max=0.0611
-09:47:22 [dictation.audio] 音频: 原始rms=0.0132 resample后rms=0.0132 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=1.000, rms=0.0132, max=0.0320
-09:47:22 [dictation.audio] 音频: 原始rms=0.0049 resample后rms=0.0049 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.999, rms=0.0049, max=0.0132
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.988, rms=0.0056, max=0.0176
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.798, rms=0.0051, max=0.0123
-09:47:22 [dictation.audio] 音频: 原始rms=0.0038 resample后rms=0.0038 len=512
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.426, rms=0.0038, max=0.0101
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.132, rms=0.0041, max=0.0107
-09:47:22 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:22 [dictation.vad] VAD: prob=0.041, rms=0.0036, max=0.0092
-09:47:23 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:23 [dictation.vad] VAD: prob=0.021, rms=0.0035, max=0.0087
-09:47:23 [dictation.audio] 音频: 原始rms=0.0027 resample后rms=0.0027 len=512
-09:47:23 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:23 [dictation.vad] VAD: prob=0.011, rms=0.0027, max=0.0079
-09:47:23 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:23 [dictation] _run_loop: 处理 chunk #90, len=512
-09:47:23 [dictation.vad] VAD: prob=0.009, rms=0.0034, max=0.0084
-09:47:23 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:23 [dictation.vad] VAD: prob=0.012, rms=0.0033, max=0.0088
-09:47:23 [dictation] 键盘读到: ' ' ord=32
-09:47:23 [dictation] 检测到空格键
-09:47:23 [dictation] on_space() 被调用
-09:47:23 [dictation] on_space() 事件已入队，队列大小=1
-09:47:23 [dictation] 空格键: engine._state=State.LISTENING
-09:47:23 [dictation] stop() called, current state=State.LISTENING
-09:47:23 [dictation] stop() setting _running=False
-09:47:23 [dictation] stop() calling _audio.stop()
-09:47:23 [dictation.audio] read() 获取 chunk: len=512, qsize=0
-09:47:23 [dictation] _run_loop: _running=False, 退出, 处理了 91 个 chunk
-09:47:23 [dictation] _run_loop: 循环结束, 共处理 91 个 chunk
-09:47:23 [dictation] _flush() called
-09:47:23 [dictation.asr.sensevoice] sensevoice flush: buffer=27648
-09:47:23 [dictation] 状态变化: State.FLUSHING
-09:47:23 [dictation] 状态变化: State.FLUSHING
-09:47:23 [dictation.asr.sensevoice] sensevoice result: 还是有点慢。...
-09:47:23 [dictation] 转写: partial=False, text=还是有点慢。... (0.8s)
-09:47:23 [dictation] 状态变化: State.IDLE
+10:33:04 [dictation] 启动中 (引擎: sensevoice, 模型: small)
+10:33:04 [dictation] 预加载引擎中...
+10:33:05 [dictation] VAD 引擎加载完成
+10:33:05 [dictation.asr.sensevoice] 加载 SenseVoice 模型...
+10:33:33 [root] New registry table added: preprocessor_classes
+10:33:33 [root] New registry table added: prompt_classes
+10:33:33 [root] Key Conformer already exists in model_classes, re-register
+10:33:34 [root] Key ParaformerSANMDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key ParaformerSANMDecoderExport already exists in decoder_classes, re-register
+10:33:34 [root] Key ParaformerSANMDecoderOnlineExport already exists in decoder_classes, re-register
+10:33:34 [root] Key ParaformerSANDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key ParaformerDecoderSANExport already exists in decoder_classes, re-register
+10:33:34 [root] New registry table added: adaptor_classes
+10:33:34 [root] Key Linear already exists in adaptor_classes, re-register
+10:33:34 [root] Key TransformerDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key LightweightConvolutionTransformerDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key LightweightConvolution2DTransformerDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key DynamicConvolutionTransformerDecoder already exists in decoder_classes, re-register
+10:33:34 [root] Key DynamicConvolution2DTransformerDecoder already exists in decoder_classes, re-register
+10:33:34 [root] New registry table added: lid_predictor_classes
+10:33:35 [root] download models from model hub: ms
+10:33:35 [filelock] Attempting to acquire lock 4815615328 on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
+10:33:35 [filelock] Lock 4815615328 acquired on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
+10:33:35 [urllib3.connectionpool] Starting new HTTPS connection (1): www.modelscope.cn:443
+10:33:35 [urllib3.connectionpool] Starting new HTTPS connection (1): www.modelscope.cn:443
+10:33:35 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall HTTP/1.1" 200 None
+10:33:35 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall/revisions HTTP/1.1" 200 318
+10:33:36 [urllib3.connectionpool] https://www.modelscope.cn:443 "GET /api/v1/models/iic/SenseVoiceSmall/repo/files?Revision=master&Recursive=True HTTP/1.1" 200 None
+10:33:36 [filelock] Attempting to release lock 4815615328 on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
+10:33:36 [filelock] Lock 4815615328 released on /Users/aqiu/.cache/modelscope/hub/.lock/iic___SenseVoiceSmall
+10:33:36 [root] trust_remote_code: False
+10:33:36 [root] Loading pretrained params from /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt
+10:33:36 [root] ckpt: /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt
+10:33:38 [root] scope_map: ['module.', 'None']
+10:33:38 [root] excludes: None
+10:33:38 [root] Loading ckpt: /Users/aqiu/.cache/modelscope/hub/models/iic/SenseVoiceSmall/model.pt, status: <All keys matched successfully>
+10:33:38 [dictation.asr.sensevoice] SenseVoice warm-up...
+10:33:39 [dictation.asr.sensevoice] SenseVoice 就绪
+10:33:39 [dictation] ASR 引擎加载完成
+10:33:39 [dictation] 引擎就绪，按空格开始
+10:33:39 [dictation] 键盘监听开始
+10:34:01 [dictation] 键盘读到: ' ' ord=32
+10:34:01 [dictation] 检测到空格键
+10:34:01 [dictation] on_space() 被调用
+10:34:01 [dictation] on_space() 事件已入队，队列大小=1
+10:34:01 [dictation] 空格键: engine._state=State.IDLE
+10:34:02 [dictation] _run_loop() 开始
+10:34:02 [dictation] _run_loop: 使用 MicrophoneCapture
+10:34:02 [dictation] _run_loop: 开始迭代 chunks
+10:34:02 [dictation] 状态变化: State.LISTENING
+10:34:02 [dictation.audio] read_all() 开始
+10:34:02 [dictation.audio] 音频: 原始rms=0.0026 resample后rms=0.0026 len=512
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation] _run_loop: 处理 chunk #1, len=512
+10:34:02 [dictation.audio] 音频: 原始rms=0.0002 resample后rms=0.0002 len=512
+10:34:02 [dictation.vad] VAD: prob=0.054, rms=0.0026, max=0.0147
+10:34:02 [dictation] VAD: is_speech=False, prob=0.054, rms=0.0026
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation] _run_loop: 处理 chunk #2, len=512
+10:34:02 [dictation.vad] VAD: prob=0.041, rms=0.0002, max=0.0007
+10:34:02 [dictation] VAD: is_speech=False, prob=0.041, rms=0.0002
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation] _run_loop: 处理 chunk #3, len=512
+10:34:02 [dictation.vad] VAD: prob=0.014, rms=0.0001, max=0.0003
+10:34:02 [dictation] VAD: is_speech=False, prob=0.014, rms=0.0001
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.006, rms=0.0002, max=0.0009
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.011, rms=0.0009, max=0.0025
+10:34:02 [dictation.audio] 音频: 原始rms=0.0019 resample后rms=0.0019 len=512
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.014, rms=0.0019, max=0.0132
+10:34:02 [dictation.audio] 音频: 原始rms=0.0008 resample后rms=0.0008 len=512
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.006, rms=0.0008, max=0.0022
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.007, rms=0.0010, max=0.0030
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.008, rms=0.0009, max=0.0021
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation] _run_loop: 处理 chunk #10, len=512
+10:34:02 [dictation.vad] VAD: prob=0.010, rms=0.0011, max=0.0024
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.012, rms=0.0007, max=0.0021
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.010, rms=0.0010, max=0.0029
+10:34:02 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:02 [dictation.vad] VAD: prob=0.009, rms=0.0009, max=0.0024
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.010, rms=0.0008, max=0.0024
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.014, rms=0.0013, max=0.0032
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.010, rms=0.0013, max=0.0032
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.011, rms=0.0007, max=0.0024
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.014, rms=0.0008, max=0.0024
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.021, rms=0.0007, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation] _run_loop: 处理 chunk #20, len=512
+10:34:03 [dictation.vad] VAD: prob=0.017, rms=0.0010, max=0.0029
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.013, rms=0.0008, max=0.0029
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.011, rms=0.0012, max=0.0036
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.009, rms=0.0007, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.009, rms=0.0006, max=0.0016
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.008, rms=0.0008, max=0.0019
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.013, rms=0.0008, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.009, rms=0.0006, max=0.0018
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.006, rms=0.0005, max=0.0016
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.006, rms=0.0010, max=0.0023
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation] _run_loop: 处理 chunk #30, len=512
+10:34:03 [dictation.vad] VAD: prob=0.005, rms=0.0010, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.005, rms=0.0008, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.004, rms=0.0008, max=0.0021
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.003, rms=0.0009, max=0.0023
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.003, rms=0.0009, max=0.0027
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.003, rms=0.0010, max=0.0031
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.002, rms=0.0008, max=0.0025
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.002, rms=0.0008, max=0.0020
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.002, rms=0.0011, max=0.0026
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.002, rms=0.0014, max=0.0037
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation] _run_loop: 处理 chunk #40, len=512
+10:34:03 [dictation.vad] VAD: prob=0.002, rms=0.0010, max=0.0024
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.001, rms=0.0011, max=0.0023
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.001, rms=0.0008, max=0.0022
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.008, rms=0.0012, max=0.0075
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.005, rms=0.0013, max=0.0034
+10:34:03 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:03 [dictation.vad] VAD: prob=0.004, rms=0.0008, max=0.0024
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0008, max=0.0024
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0009, max=0.0027
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0008, max=0.0023
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.007, rms=0.0009, max=0.0028
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation] _run_loop: 处理 chunk #50, len=512
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0010, max=0.0027
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0010, max=0.0029
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0009, max=0.0030
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.004, rms=0.0010, max=0.0030
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.004, rms=0.0009, max=0.0024
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.003, rms=0.0008, max=0.0033
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.007, rms=0.0014, max=0.0035
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0011, max=0.0027
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.005, rms=0.0011, max=0.0029
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.007, rms=0.0016, max=0.0051
+10:34:04 [dictation.audio] 音频: 原始rms=0.0027 resample后rms=0.0027 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation] _run_loop: 处理 chunk #60, len=512
+10:34:04 [dictation.vad] VAD: prob=0.042, rms=0.0027, max=0.0101
+10:34:04 [dictation.audio] 音频: 原始rms=0.0073 resample后rms=0.0073 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.409, rms=0.0073, max=0.0157
+10:34:04 [dictation.audio] 音频: 原始rms=0.0103 resample后rms=0.0103 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.638, rms=0.0103, max=0.0208
+10:34:04 [dictation] 语音段开始 (prob=0.638)
+10:34:04 [dictation.audio] 音频: 原始rms=0.0133 resample后rms=0.0133 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.883, rms=0.0133, max=0.0250
+10:34:04 [dictation.audio] 音频: 原始rms=0.0144 resample后rms=0.0144 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.861, rms=0.0144, max=0.0264
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.770, rms=0.0141, max=0.0224
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.703, rms=0.0152, max=0.0247
+10:34:04 [dictation.audio] 音频: 原始rms=0.0160 resample后rms=0.0160 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.450, rms=0.0160, max=0.0271
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.377, rms=0.0163, max=0.0284
+10:34:04 [dictation.audio] 音频: 原始rms=0.0193 resample后rms=0.0193 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.381, rms=0.0193, max=0.0350
+10:34:04 [dictation.audio] 音频: 原始rms=0.0220 resample后rms=0.0220 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation] _run_loop: 处理 chunk #70, len=512
+10:34:04 [dictation.vad] VAD: prob=0.226, rms=0.0220, max=0.0434
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.112, rms=0.0226, max=0.0445
+10:34:04 [dictation.audio] 音频: 原始rms=0.0192 resample后rms=0.0192 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.090, rms=0.0192, max=0.0405
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.121, rms=0.0183, max=0.0300
+10:34:04 [dictation.audio] 音频: 原始rms=0.0217 resample后rms=0.0217 len=512
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.072, rms=0.0217, max=0.0369
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.052, rms=0.0213, max=0.0328
+10:34:04 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:04 [dictation.vad] VAD: prob=0.038, rms=0.0216, max=0.0359
+10:34:05 [dictation.audio] 音频: 原始rms=0.0188 resample后rms=0.0188 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.028, rms=0.0188, max=0.0332
+10:34:05 [dictation.audio] 音频: 原始rms=0.0120 resample后rms=0.0120 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.035, rms=0.0120, max=0.0233
+10:34:05 [dictation.audio] 音频: 原始rms=0.0067 resample后rms=0.0067 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.088, rms=0.0067, max=0.0137
+10:34:05 [dictation.audio] 音频: 原始rms=0.0037 resample后rms=0.0037 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation] _run_loop: 处理 chunk #80, len=512
+10:34:05 [dictation.vad] VAD: prob=0.128, rms=0.0037, max=0.0085
+10:34:05 [dictation.audio] 音频: 原始rms=0.0022 resample后rms=0.0022 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.089, rms=0.0022, max=0.0058
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.054, rms=0.0018, max=0.0051
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.028, rms=0.0017, max=0.0054
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.017, rms=0.0014, max=0.0039
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.013, rms=0.0016, max=0.0038
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.010, rms=0.0014, max=0.0048
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.008, rms=0.0013, max=0.0035
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.006, rms=0.0014, max=0.0039
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.005, rms=0.0013, max=0.0043
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation] _run_loop: 处理 chunk #90, len=512
+10:34:05 [dictation.vad] VAD: prob=0.004, rms=0.0015, max=0.0052
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.004, rms=0.0013, max=0.0047
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.004, rms=0.0017, max=0.0046
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.005, rms=0.0016, max=0.0045
+10:34:05 [dictation.audio] 音频: 原始rms=0.0011 resample后rms=0.0011 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.004, rms=0.0011, max=0.0032
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.003, rms=0.0013, max=0.0033
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0011, max=0.0042
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0013, max=0.0034
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0017, max=0.0049
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0011, max=0.0032
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation] _run_loop: 处理 chunk #100, len=512
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0017, max=0.0057
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.002, rms=0.0018, max=0.0047
+10:34:05 [dictation.audio] 音频: 原始rms=0.0039 resample后rms=0.0039 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.018, rms=0.0039, max=0.0134
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.037, rms=0.0043, max=0.0181
+10:34:05 [dictation.audio] 音频: 原始rms=0.0250 resample后rms=0.0250 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.618, rms=0.0250, max=0.0842
+10:34:05 [dictation.audio] 音频: 原始rms=0.0429 resample后rms=0.0429 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.910, rms=0.0429, max=0.1140
+10:34:05 [dictation.audio] 音频: 原始rms=0.0331 resample后rms=0.0331 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.924, rms=0.0331, max=0.0879
+10:34:05 [dictation.audio] 音频: 原始rms=0.0373 resample后rms=0.0373 len=512
+10:34:05 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:05 [dictation.vad] VAD: prob=0.930, rms=0.0373, max=0.0922
+10:34:06 [dictation.audio] 音频: 原始rms=0.0317 resample后rms=0.0317 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.911, rms=0.0317, max=0.0665
+10:34:06 [dictation.audio] 音频: 原始rms=0.0333 resample后rms=0.0333 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.904, rms=0.0333, max=0.0707
+10:34:06 [dictation.audio] 音频: 原始rms=0.0411 resample后rms=0.0411 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation] _run_loop: 处理 chunk #110, len=512
+10:34:06 [dictation.vad] VAD: prob=0.958, rms=0.0411, max=0.0950
+10:34:06 [dictation.audio] 音频: 原始rms=0.0474 resample后rms=0.0473 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.891, rms=0.0473, max=0.1146
+10:34:06 [dictation.audio] 音频: 原始rms=0.0583 resample后rms=0.0583 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.881, rms=0.0583, max=0.1214
+10:34:06 [dictation.audio] 音频: 原始rms=0.0519 resample后rms=0.0519 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.944, rms=0.0519, max=0.1051
+10:34:06 [dictation.audio] 音频: 原始rms=0.0460 resample后rms=0.0460 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.957, rms=0.0460, max=0.0886
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.955, rms=0.0452, max=0.0853
+10:34:06 [dictation.audio] 音频: 原始rms=0.0393 resample后rms=0.0393 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.940, rms=0.0393, max=0.0719
+10:34:06 [dictation.audio] 音频: 原始rms=0.0322 resample后rms=0.0322 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.968, rms=0.0322, max=0.0664
+10:34:06 [dictation.audio] 音频: 原始rms=0.0172 resample后rms=0.0172 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.993, rms=0.0172, max=0.0444
+10:34:06 [dictation.audio] 音频: 原始rms=0.0137 resample后rms=0.0136 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.992, rms=0.0136, max=0.0315
+10:34:06 [dictation.audio] 音频: 原始rms=0.0061 resample后rms=0.0061 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation] _run_loop: 处理 chunk #120, len=512
+10:34:06 [dictation.vad] VAD: prob=0.993, rms=0.0061, max=0.0185
+10:34:06 [dictation.audio] 音频: 原始rms=0.0300 resample后rms=0.0300 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0300, max=0.0792
+10:34:06 [dictation.audio] 音频: 原始rms=0.0507 resample后rms=0.0507 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0507, max=0.1076
+10:34:06 [dictation.audio] 音频: 原始rms=0.0379 resample后rms=0.0380 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0380, max=0.0987
+10:34:06 [dictation.audio] 音频: 原始rms=0.0283 resample后rms=0.0283 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0283, max=0.0533
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0277, max=0.0454
+10:34:06 [dictation.audio] 音频: 原始rms=0.0335 resample后rms=0.0335 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0335, max=0.0907
+10:34:06 [dictation.audio] 音频: 原始rms=0.0397 resample后rms=0.0397 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0397, max=0.0850
+10:34:06 [dictation.audio] 音频: 原始rms=0.0367 resample后rms=0.0367 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0367, max=0.0793
+10:34:06 [dictation.audio] 音频: 原始rms=0.0253 resample后rms=0.0253 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0253, max=0.0666
+10:34:06 [dictation.audio] 音频: 原始rms=0.0233 resample后rms=0.0233 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation] _run_loop: 处理 chunk #130, len=512
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0233, max=0.0383
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0227, max=0.0350
+10:34:06 [dictation.audio] 音频: 原始rms=0.0283 resample后rms=0.0283 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0283, max=0.0711
+10:34:06 [dictation.audio] 音频: 原始rms=0.0303 resample后rms=0.0302 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0302, max=0.0670
+10:34:06 [dictation.audio] 音频: 原始rms=0.0261 resample后rms=0.0260 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0260, max=0.0480
+10:34:06 [dictation.audio] 音频: 原始rms=0.0242 resample后rms=0.0242 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.999, rms=0.0242, max=0.0497
+10:34:06 [dictation.audio] 音频: 原始rms=0.0211 resample后rms=0.0211 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0211, max=0.0375
+10:34:06 [dictation.audio] 音频: 原始rms=0.0158 resample后rms=0.0158 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=1.000, rms=0.0158, max=0.0325
+10:34:06 [dictation.audio] 音频: 原始rms=0.0075 resample后rms=0.0075 len=512
+10:34:06 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:06 [dictation.vad] VAD: prob=0.999, rms=0.0075, max=0.0144
+10:34:07 [dictation.audio] 音频: 原始rms=0.0031 resample后rms=0.0031 len=512
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.996, rms=0.0031, max=0.0082
+10:34:07 [dictation.audio] 音频: 原始rms=0.0014 resample后rms=0.0014 len=512
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation] _run_loop: 处理 chunk #140, len=512
+10:34:07 [dictation.vad] VAD: prob=0.947, rms=0.0014, max=0.0033
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.474, rms=0.0013, max=0.0032
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.113, rms=0.0009, max=0.0027
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.036, rms=0.0010, max=0.0026
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.015, rms=0.0010, max=0.0024
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.009, rms=0.0013, max=0.0035
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.005, rms=0.0010, max=0.0025
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.004, rms=0.0009, max=0.0022
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.004, rms=0.0010, max=0.0028
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.003, rms=0.0009, max=0.0023
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation] _run_loop: 处理 chunk #150, len=512
+10:34:07 [dictation.vad] VAD: prob=0.003, rms=0.0010, max=0.0023
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.002, rms=0.0009, max=0.0020
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.002, rms=0.0010, max=0.0027
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0007, max=0.0016
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0006, max=0.0016
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.002, rms=0.0007, max=0.0022
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.002, rms=0.0009, max=0.0022
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.002, rms=0.0013, max=0.0026
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0008, max=0.0021
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0007, max=0.0019
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation] _run_loop: 处理 chunk #160, len=512
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0008, max=0.0018
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0007, max=0.0020
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0005, max=0.0014
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0007, max=0.0017
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0006, max=0.0016
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.000, rms=0.0006, max=0.0015
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.000, rms=0.0007, max=0.0016
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.000, rms=0.0006, max=0.0015
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.000, rms=0.0006, max=0.0014
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation.vad] VAD: prob=0.000, rms=0.0006, max=0.0015
+10:34:07 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:07 [dictation] _run_loop: 处理 chunk #170, len=512
+10:34:07 [dictation.vad] VAD: prob=0.001, rms=0.0010, max=0.0028
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.001, rms=0.0011, max=0.0044
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.001, rms=0.0011, max=0.0026
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.001, rms=0.0013, max=0.0029
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.001, rms=0.0010, max=0.0033
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.019, rms=0.0018, max=0.0081
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.003, rms=0.0015, max=0.0044
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.002, rms=0.0010, max=0.0032
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.001, rms=0.0007, max=0.0016
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0007, max=0.0018
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation] _run_loop: 处理 chunk #180, len=512
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0011, max=0.0029
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0009, max=0.0022
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0010, max=0.0025
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0006, max=0.0017
+10:34:08 [dictation.audio] read() 获取 chunk: len=512, qsize=0
+10:34:08 [dictation.vad] VAD: prob=0.000, rms=0.0005, max=0.0017
+10:34:08 [dictation] 键盘读到: ' ' ord=32
+10:34:08 [dictation] 检测到空格键
+10:34:08 [dictation] on_space() 被调用
+10:34:08 [dictation] on_space() 事件已入队，队列大小=1
+10:34:08 [dictation] 空格键: engine._state=State.LISTENING
+10:34:08 [dictation] stop() called, current state=State.LISTENING
+10:34:08 [dictation] stop() setting _running=False
+10:34:08 [dictation] stop() calling _audio.stop()
+10:34:08 [dictation] 状态变化: State.FLUSHING
+10:34:09 [dictation.audio] read() 超时: queue.Empty
+10:34:09 [dictation.audio] read_all() 结束
+10:34:09 [dictation] _run_loop: 循环结束, 共处理 184 个 chunk
+10:34:09 [dictation] _flush() called
+10:34:09 [dictation] 状态变化: State.FLUSHING
+10:34:09 [dictation.asr.sensevoice] sensevoice flush: buffer=62976
+10:34:10 [dictation.asr.sensevoice] sensevoice result: 嗯，安慰一下妈妈。...
+10:34:10 [dictation] 转写: partial=False, text=嗯，安慰一下妈妈。... (0.8s)
+10:34:10 [dictation] 状态变化: State.IDLE

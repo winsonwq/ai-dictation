@@ -6,3 +6,4 @@ rich>=13.0.0
 torch>=2.0.0
 huggingface-hub>=0.20.0
 funasr>=1.0.0
+

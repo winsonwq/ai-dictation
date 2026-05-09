@@ -1,6 +1,6 @@
 """
 engine/_asr_whisper.py
-Whisper.cpp backend — 通过 whisper-cli 子进程调用，Metal GPU 加速
+Whisper.cpp backend — whisper-cli subprocess (Metal GPU)
 """
 
 import os
@@ -32,22 +32,19 @@ MODEL_FILES = {
 
 
 class WhisperCppBackend:
-    """whisper.cpp ASR 后端"""
+    """whisper.cpp ASR 后端 — whisper-cli subprocess"""
 
     def __init__(
         self,
         model_size: str = 'small',
         language: str = 'zh',
         n_threads: int = 0,
-        beam_size: int = 1,  # 1=greedy 最快
         cache_dir: Optional[str] = None,
     ):
         self.model_size = model_size
         self.language = language
         self.n_threads = n_threads
-        self.beam_size = beam_size
         self.cache_dir = cache_dir or self._default_cache_dir()
-
         self._sample_rate = 16000
         self._running = False
         self._lock = threading.Lock()
@@ -57,23 +54,14 @@ class WhisperCppBackend:
         self._whisper_bin: Optional[str] = None
         self._model_path: Optional[Path] = None
 
-    # ---- 生命周期 ----
-
     def load(self):
         self._whisper_bin = shutil.which('whisper-cli')
         if self._whisper_bin is None:
-            raise RuntimeError(
-                '未找到 whisper-cli，请先安装 whisper.cpp:\n'
-                '  brew install whisper-cpp'
-            )
+            raise RuntimeError('未找到 whisper-cli，请先: brew install whisper-cpp')
         self._model_path = self._get_model_path()
         if not self._model_path.exists():
             self._download_model()
-
-        # 预热 Metal GPU：首次推理编译 shader，后续调用瞬间完成
-        _logger.debug('whisper warm-up...')
-        self._transcribe(np.zeros(16000, dtype=np.float32))  # 1s 静音
-        _logger.debug(f'whisper.cpp 就绪 (模型: {self.model_size}, beam={self.beam_size})')
+        _logger.debug(f'whisper.cpp 就绪 ({self.model_size})')
 
     def start(self):
         self._running = True
@@ -99,7 +87,6 @@ class WhisperCppBackend:
 
         _logger.debug(f'whisper flush: buffer={buf_len}')
         text = self._transcribe(audio_for_flush)
-
         with self._lock:
             self._audio_buffer = np.array([], dtype=np.float32)
 
@@ -118,37 +105,23 @@ class WhisperCppBackend:
             self._audio_buffer = np.array([], dtype=np.float32)
         gc.collect()
 
-    # ---- 内部 ----
-
     def _transcribe(self, audio: np.ndarray) -> str:
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as f:
             wav_path = f.name
         try:
             with wave.open(wav_path, 'wb') as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(self._sample_rate)
-                clipped = np.clip(audio, -1.0, 1.0)
-                wf.writeframes((clipped * 32767).astype(np.int16).tobytes())
+                wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(self._sample_rate)
+                wf.writeframes((np.clip(audio, -1, 1) * 32767).astype(np.int16).tobytes())
 
-            cmd = [
-                self._whisper_bin,
-                '-m', str(self._model_path),
-                '-f', wav_path,
-                '-l', self.language,
-                '--no-timestamps', '-nt',
-                '--no-prints',           # 抑制进度输出
-                '-bs', str(self.beam_size),  # beam size
-            ]
-            if self.n_threads > 0:
-                cmd += ['-t', str(self.n_threads)]
-
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            result = subprocess.run(
+                [self._whisper_bin, '-m', str(self._model_path), '-f', wav_path,
+                 '-l', self.language, '--no-timestamps', '-nt', '--no-prints', '-bs', '1'],
+                capture_output=True, text=True, timeout=120,
+            )
             if result.returncode != 0:
                 _logger.error(f'whisper-cli error: {result.stderr}')
                 return ''
-            lines = [l.strip() for l in result.stdout.strip().split('\n') if l.strip()]
-            return ''.join(lines)
+            return ''.join(l.strip() for l in result.stdout.strip().split('\n') if l.strip())
         except subprocess.TimeoutExpired:
             _logger.error('whisper-cli timeout')
             return ''
@@ -156,10 +129,8 @@ class WhisperCppBackend:
             _logger.error(f'transcribe error: {e}')
             return ''
         finally:
-            try:
-                os.unlink(wav_path)
-            except OSError:
-                pass
+            try: os.unlink(wav_path)
+            except OSError: pass
 
     def _get_model_path(self) -> Path:
         filename = MODEL_FILES.get(self.model_size, f'ggml-{self.model_size}.bin')
@@ -171,13 +142,14 @@ class WhisperCppBackend:
 
     def _download_model(self):
         from huggingface_hub import hf_hub_download
-        self._model_path.parent.mkdir(parents=True, exist_ok=True)
-        filename = self._model_path.name
+        model_path = self._get_model_path()
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        filename = model_path.name
         _logger.info(f'下载模型: {filename} ...')
         downloaded = hf_hub_download(repo_id=WHISPER_CPP_REPO, filename=filename,
-                                      cache_dir=str(self._model_path.parent))
-        if os.path.abspath(downloaded) != os.path.abspath(str(self._model_path)):
-            if self._model_path.exists() or self._model_path.is_symlink():
-                self._model_path.unlink()
-            os.symlink(os.path.abspath(downloaded), str(self._model_path))
-        _logger.info(f'模型已缓存: {self._model_path}')
+                                      cache_dir=str(model_path.parent))
+        if os.path.abspath(downloaded) != os.path.abspath(str(model_path)):
+            if model_path.exists() or model_path.is_symlink():
+                model_path.unlink()
+            os.symlink(os.path.abspath(downloaded), str(model_path))
+        _logger.info(f'模型已缓存: {model_path}')
