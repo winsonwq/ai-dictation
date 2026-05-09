@@ -45,7 +45,7 @@ class SenseVoiceBackend:
 
         from sensevoice.onnx.sense_voice_ort_session import SenseVoiceInferenceSession
         from sensevoice.utils.frontend import WavFrontend
-        from sensevoice.utils.fsmn_vad import FSMNVad, VADXOptions
+        from sensevoice.utils.fsmn_vad import FSMNVad
 
         # 模型缓存目录
         cache_dir = Path.home() / '.cache' / 'sensevoice-onnx'
@@ -76,13 +76,7 @@ class SenseVoiceBackend:
         self._frontend = WavFrontend(str(model_dir / 'am.mvn'))
 
         # 加载 VAD
-        vad_options = VADXOptions(
-            sample_rate=16000,
-            detect_mode=1,  # kVadMutipleUtteranceDetectMode
-            max_end_silence_time=800,
-            max_start_silence_time=3000,
-        )
-        self._vad = FSMNVad(str(model_dir / 'fsmn_vad.onnx'), vad_options)
+        self._vad = FSMNVad(str(model_dir))
 
         _logger.info('SenseVoice ONNX 就绪')
 
@@ -110,10 +104,10 @@ class SenseVoiceBackend:
         audio = self._ensure_audio_format(audio)
 
         # VAD 检测语音段
-        speech_segments = self._vad.detect(audio)
+        speech_segments = self._vad.segments_offline(audio)
 
         if not speech_segments:
-            return ASRResult(text='', duration=len(audio) / self._sample_rate)
+            return ASRResult(text='', end_time=len(audio) / self._sample_rate)
 
         # 取最长的语音段进行转写
         best_segment = max(speech_segments, key=lambda s: s[1] - s[0])
@@ -123,7 +117,7 @@ class SenseVoiceBackend:
         speech_audio = audio[start_sample:end_sample]
 
         if len(speech_audio) < self._min_audio:
-            return ASRResult(text='', duration=len(audio) / self._sample_rate)
+            return ASRResult(text='', end_time=len(audio) / self._sample_rate)
 
         # 提取音频特征
         audio_feat = self._frontend.get_features(speech_audio)
@@ -142,7 +136,9 @@ class SenseVoiceBackend:
 
         return ASRResult(
             text=text,
-            duration=len(audio) / self._sample_rate,
+            start_time=start_ms / 1000.0,
+            end_time=end_ms / 1000.0,
+            language=self.language,
         )
 
     def _ensure_audio_format(self, audio: np.ndarray) -> np.ndarray:

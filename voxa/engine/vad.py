@@ -1,20 +1,19 @@
 """
 voxa/engine/vad.py
 Voice Activity Detection — ONNX Runtime 版本，不需要 PyTorch
-使用 sensevoice-onnx 内置的 FSMN VAD
+使用 sensevoice-onnx 内置的 FSMN VAD (离线模式)
 """
 
 import logging
 import numpy as np
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 _logger = logging.getLogger('dictation.vad')
 
 # VAD 参数
 VAD_SAMPLE_RATE = 16000
-VAD_CHUNK_SIZE = 512  # 32ms @ 16kHz
 
 
 @dataclass
@@ -25,14 +24,11 @@ class VADResult:
 
 class VADEngine:
     """
-    FSMN VAD 流式封装 — ONNX Runtime 版本
+    FSMN VAD — ONNX Runtime 版本 (离线模式)
 
-    使用方式:
-        vad = VADEngine()
-        for chunk in audio_chunks:
-            result = vad.push(chunk)  # chunk: float32 array
-            if result.is_speech:
-                print("有人说话")
+    由于 FSMNVad 只有离线接口 (segments_offline)，我们用能量检测辅助：
+    1. 累积音频
+    2. 当静音超过阈值时，调用 segments_offline 检测语音段
     """
 
     def __init__(
@@ -41,19 +37,14 @@ class VADEngine:
         min_speech_duration_ms: int = 250,
         min_silence_duration_ms: int = 500,
     ):
-        """
-        Args:
-            threshold: 语音检测阈值 (0.0~1.0)，越高越保守
-            min_speech_duration_ms: 最小语音持续时间
-            min_silence_duration_ms: 最小静音持续时间，触发结束检测
-        """
         self.threshold = threshold
         self.min_speech_duration_ms = min_speech_duration_ms
         self.min_silence_duration_ms = min_silence_duration_ms
 
         self._vad = None
-        self._speech_frames = 0
-        self._silence_frames = 0
+        self._audio_buffer = np.array([], dtype=np.float32)
+        self._speech_active = False
+        self._silence_samples = 0
 
     def load(self):
         """加载 FSMN VAD 模型"""
@@ -62,12 +53,12 @@ class VADEngine:
 
         _logger.info('加载 FSMN VAD 模型 (ONNX)...')
 
-        from sensevoice.utils.fsmn_vad import FSMNVad, VADXOptions
+        from sensevoice.utils.fsmn_vad import FSMNVad
 
         # 模型路径
         cache_dir = Path.home() / '.cache' / 'sensevoice-onnx' / 'models' / 'SenseVoice-onnx'
 
-        if not cache_dir.exists():
+        if not (cache_dir / 'fsmn-config.yaml').exists():
             _logger.info('首次使用，自动下载 SenseVoice ONNX 模型（含 VAD）...')
             from huggingface_hub import snapshot_download
             snapshot_download(
@@ -75,23 +66,12 @@ class VADEngine:
                 local_dir=str(cache_dir),
             )
 
-        vad_model_path = cache_dir / 'fsmn_vad.onnx'
-        if not vad_model_path.exists():
-            raise FileNotFoundError(f'VAD 模型未找到: {vad_model_path}')
-
-        options = VADXOptions(
-            sample_rate=16000,
-            detect_mode=1,  # kVadMutipleUtteranceDetectMode
-            max_end_silence_time=800,
-            max_start_silence_time=3000,
-        )
-
-        self._vad = FSMNVad(str(vad_model_path), options)
+        self._vad = FSMNVad(str(cache_dir))
         _logger.info('FSMN VAD 就绪')
 
     def push(self, chunk: np.ndarray) -> VADResult:
         """
-        处理一个音频块
+        处理一个音频块（简化版：基于能量检测）
 
         Args:
             chunk: np.ndarray, float32, shape=(n_samples,), 16kHz
@@ -109,35 +89,53 @@ class VADEngine:
         if max_val > 0:
             chunk = chunk / max_val
 
-        # FSMN VAD 检测
-        # detect() 返回 List[Tuple[start_ms, end_ms]]
-        segments = self._vad.detect(chunk)
+        # 简单能量检测
+        rms = np.sqrt(np.mean(chunk ** 2))
+        is_speech = rms > 0.01  # 简单阈值
 
-        # 有语音段返回 True
-        has_speech = len(segments) > 0
-
-        # 简单的状态机逻辑
-        if has_speech:
-            self._speech_frames += 1
-            self._silence_frames = 0
+        if is_speech:
+            self._silence_samples = 0
+            self._speech_active = True
         else:
-            self._silence_frames += 1
-            self._speech_frames = 0
+            self._silence_samples += len(chunk)
+            # 静音超过 500ms 认为语音结束
+            if self._silence_samples > self.min_silence_duration_ms * 16:  # 16 samples/ms
+                self._speech_active = False
 
-        # 计算概率（基于状态）
-        prob = 1.0 if has_speech else 0.0
+        prob = 1.0 if self._speech_active else 0.0
+        _logger.debug(f'VAD: energy={rms:.4f}, speech={is_speech}, prob={prob:.3f}')
+        return VADResult(is_speech=self._speech_active, probability=prob)
 
-        _logger.debug(f'VAD: speech={has_speech}, prob={prob:.3f}')
-        return VADResult(is_speech=has_speech, probability=prob)
+    def detect_segments(self, audio: np.ndarray) -> List:
+        """
+        使用 FSMN VAD 检测语音段（离线模式）
+
+        Args:
+            audio: float32 array, 16kHz
+
+        Returns:
+            List of (start_ms, end_ms) tuples
+        """
+        if self._vad is None:
+            self.load()
+
+        audio = np.atleast_1d(audio).astype(np.float32)
+        max_val = np.abs(audio).max()
+        if max_val > 0:
+            audio = audio / max_val
+
+        segments = self._vad.segments_offline(audio)
+        return segments
 
     def reset(self):
         """重置状态"""
-        self._speech_frames = 0
-        self._silence_frames = 0
+        self._audio_buffer = np.array([], dtype=np.float32)
+        self._speech_active = False
+        self._silence_samples = 0
 
     def is_speech_active(self) -> bool:
         """当前是否处于语音活动状态"""
-        return self._speech_frames > 0
+        return self._speech_active
 
 
 class FileVADSimulator:
@@ -168,7 +166,6 @@ if __name__ == '__main__':
     # 生成 3 秒测试音频
     duration = 3.0
     t = np.linspace(0, duration, int(VAD_SAMPLE_RATE * duration), dtype=np.float32)
-
     signal = (
         0.3 * np.sin(2 * np.pi * 200 * t) +
         0.2 * np.sin(2 * np.pi * 400 * t) +
@@ -177,14 +174,21 @@ if __name__ == '__main__':
     )
     signal = np.clip(signal, -1.0, 1.0)
 
-    # 分块测试
+    # 分块测试（能量检测）
     chunk_size = 480
     speech_chunks = 0
+    total_chunks = len(signal) // chunk_size
     for i in range(0, len(signal), chunk_size):
         chunk = signal[i:i + chunk_size]
         result = vad.push(chunk)
         if result.is_speech:
             speech_chunks += 1
 
-    print(f'检测到 {speech_chunks}/{len(signal)//chunk_size} 个语音帧')
-    print('\nVAD 模块测试通过')
+    print(f'能量检测: {speech_chunks}/{total_chunks} 个语音帧')
+
+    # 离线 VAD 测试
+    print('\n测试 FSMN 离线 VAD...')
+    segments = vad.detect_segments(signal)
+    print(f'检测到 {len(segments)} 个语音段: {segments}')
+
+    print('\n✅ VAD 模块测试通过')
